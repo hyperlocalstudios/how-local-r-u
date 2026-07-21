@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hyperlocal Durham</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-container">
+    <img class="background-image" src="assets/hyperlocal%20durham%20landing%20page/backgroundcomplete.png" alt="Hyperlocal Durham background" />
+    
+    <div class="links-container">
+      <section class="link-group">
+        <h2>Main Links</h2>
+        <div class="links-list">
+          <a class="link-button" href="#" target="_blank" rel="noopener">Hyperlocal Durham Vending Machine</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Hyperlocal Artist Network</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Online Zine Shop</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Submit Work</a>
+          <a class="link-button" href="#" onclick="openPassportModal(event)">Open-Source Passports</a>
+        </div>
+      </section>
+
+      <section class="link-group">
+        <h2>Other Links</h2>
+        <div class="links-list">
+          <a class="link-button" href="#" target="_blank" rel="noopener">Durham Queer History Browser Game</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Hyperlocal Durham NPR Story by WUNC</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Duke Chronicle Story</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Hyperlocal Durham Discord</a>
+          <a class="link-button" href="#" target="_blank" rel="noopener">Hyperisms Project Home</a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="passport-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closePassportModal()"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="passport-title">
+      <button class="modal-close" type="button" onclick="closePassportModal()" aria-label="Close">×</button>
+      <h3 id="passport-title">Open-Source Passports</h3>
+      <p>Hyperlocal works with local community orgs to create free, fun, interactive "passport" style zines as low-barrier ways for folks to get to know the city. You can print any of these black and white zines at home and take them out to receive stamps on them!</p>
+      <ul class="passport-list">
+        <li><a href="assets/passports/open%20source%20passports/hyperlocal%20durham%20-%20coffee%20passport_legacy%20version_BW.pdf" target="_blank" rel="noopener">Hyperlocal Durham Coffee Passport</a></li>
+        <li><a href="assets/passports/open%20source%20passports/hyperlocal%20durham%20passport%20-%203F_DDI_BW.pdf" target="_blank" rel="noopener">Hyperlocal Durham Passport - 3F DDI</a></li>
+        <li><a href="assets/passports/open%20source%20passports/hyperlocal%20durham%20passport%20-%20shop%20small%20holiday%20passport_DDI_BW.pdf" target="_blank" rel="noopener">Hyperlocal Durham Shop Small Holiday Passport</a></li>
+        <li><a href="assets/passports/open%20source%20passports/preservation%20durham%20-%20queer%20history%20self%20guided%20tour_BW.pdf" target="_blank" rel="noopener">Preservation Durham Queer History Self-Guided Tour</a></li>
+      </ul>
+      <div class="tip-block">
+        Tip: If printing at home, make sure you set the PDF to scale <strong>100%</strong> when you print for best alignment! If you would like to get a full color copy or prints of any of the artwork, you can get a copy from the
+        <a href="https://hyperisms.com/hyperlocal-durham" target="_blank" rel="noopener">Hyperlocal Durham vending machine downtown</a>! Note: All our artwork is made in-house by Hyperlocal's artists and our stamps are engraved at the Durham County Library Makerspace! Each passport is commissioned by the community partners listed so that we can make these initiatives as widely accessible as possible!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openPassportModal(event) {
+      event.preventDefault();
+      const modal = document.getElementById('passport-modal');
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePassportModal() {
+      const modal = document.getElementById('passport-modal');
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closePassportModal();
+      }
+    });
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Local R U? - L.O.C.A.L. Score Quiz</title>
+
+  <style>
+    /* ============================================================
+       CUSTOM FONTS
+    ============================================================= */
+    @font-face {
+      font-family: 'LKG Handwritten';
+      src: url('assets/fonts/Klg_handwritten-Regular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'JMH Typewriter';
+      src: url('assets/fonts/jmh_typewriter_dry/JMH Typewriter dry.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'JMH Typewriter';
+      src: url('assets/fonts/jmh_typewriter_dry/JMH Typewriter dry-Bold.otf') format('opentype');
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'JMH Typewriter';
+      src: url('assets/fonts/jmh_typewriter_dry/JMH Typewriter dry-Black.otf') format('opentype');
+      font-weight: 900;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'JMH Typewriter';
+      src: url('assets/fonts/jmh_typewriter_dry/JMH Typewriter dry-Thin.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    /* ============================================================
+       PAGE LAYOUT
+    ============================================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JMH Typewriter', 'Courier New', monospace;
+      background-color: #faf9f6;
+      background-image: url('assets/hyperlocal generic map gradient.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      padding: 0;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 400px;
+      background: linear-gradient(to bottom,
+        rgba(250, 249, 246, 0.95) 0%,
+        rgba(250, 249, 246, 0.9) 50%,
+        rgba(250, 249, 246, 0) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .page-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============================================================
+       HEADER SECTION
+    ============================================================= */
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      padding: 20px;
+    }
+
+    .masthead-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 15px;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .nav-links a {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.85rem;
+      color: #111111;
+      text-decoration: none;
+      padding: 4px 8px;
+      border-bottom: 1px solid transparent;
+      transition: border-bottom-color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: #111111;
+    }
+
+    /* ============================================================
+       QUIZ WIDGET CONTAINER
+    ============================================================= */
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.9);
+      border: 3px solid #111111;
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
+      padding: 0;
+    }
+
+    /* ============================================================
+       QUIZ WIDGET STYLES
+    ============================================================= */
+    #hlru-root {
+      --ink: #111111;
+      --paper: #fafaf8;
+      --line: #111111;
+      --grid: #e2e2df;
+      --muted: #6b6b68;
+      font-family: 'JMH Typewriter', 'Courier New', monospace;
+      color: var(--ink);
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/24px 24px,
+        var(--paper);
+      max-width: 100%;
+      margin: 0;
+      border: none;
+      box-sizing: border-box;
+      padding: 0;
+      position: relative;
+    }
+
+    #hlru-root *, #hlru-root *::before, #hlru-root *::after { box-sizing: border-box; }
+
+    #hlru-root .hlru-head {
+      border-bottom: none;
+      padding: 28px 24px 20px;
+      background: var(--paper);
+    }
+
+    #hlru-root h1 {
+      font-family: 'LKG Handwritten', 'Special Elite', monospace;
+      font-weight: 400;
+      font-size: 2.5rem;
+      letter-spacing: 0.02em;
+      margin: 0 0 8px;
+      text-transform: none;
+    }
+
+    #hlru-root .hlru-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    #hlru-root .hlru-progress {
+      display: flex;
+      gap: 4px;
+      padding: 12px 24px 0;
+    }
+
+    #hlru-root .hlru-progress-seg {
+      flex: 1;
+      height: 6px;
+      background: #fff;
+      border: 1.5px solid var(--ink);
+    }
+
+    #hlru-root .hlru-progress-seg.done { background: var(--ink); }
+
+    #hlru-root .hlru-body { padding: 28px 24px 24px; min-height: 320px; }
+
+    #hlru-root .hlru-step { display: none; }
+
+    #hlru-root .hlru-step.active { display: block; animation: hlru-fade .25s ease; }
+
+    @keyframes hlru-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    #hlru-root .hlru-qnum {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.8rem;
+      background: var(--ink);
+      color: var(--paper);
+      display: inline-block;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    #hlru-root .hlru-tag {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      border: 1.5px solid var(--ink);
+      padding: 2px 6px;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+
+    #hlru-root h2 {
+      font-size: 1.15rem;
+      line-height: 1.4;
+      margin: 0 0 18px;
+      font-weight: 700;
+    }
+
+    #hlru-root label { font-size: 0.9rem; display: block; }
+
+    #hlru-root input[type="number"], #hlru-root input[type="text"] {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 1rem;
+      border: 2px solid var(--ink);
+      background: #fff;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    #hlru-root select {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.9rem;
+      border: 2px solid var(--ink);
+      background: #fff;
+      padding: 8px 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #hlru-root input:focus, #hlru-root button:focus, #hlru-root select:focus { outline: 3px solid #111; outline-offset: 1px; }
+
+    #hlru-root .hlru-category-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    #hlru-root .hlru-category-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    #hlru-root .hlru-category-freq {
+      flex: 1;
+    }
+
+    #hlru-root .hlru-place-hint { font-size: 0.75rem; color: var(--muted); margin: -4px 0 16px 0; }
+
+    #hlru-root .hlru-checklist { list-style: none; margin: 0; padding: 0; }
+
+    #hlru-root .hlru-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    #hlru-root .hlru-checklist input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+
+    #hlru-root .hlru-born {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 0.85rem;
+    }
+
+    #hlru-root .hlru-born input { width: 16px; height: 16px; }
+
+    #hlru-root .hlru-slider-wrap { margin-top: 8px; }
+
+    #hlru-root input[type="range"] { width: 100%; accent-color: var(--ink); }
+
+    #hlru-root .hlru-slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    #hlru-root .hlru-slider-val {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 1.4rem;
+      text-align: center;
+      margin: 10px 0 0;
+      font-weight: 700;
+    }
+
+    #hlru-root .hlru-nav {
+      display: flex;
+      justify-content: space-between;
+      border-top: none;
+      padding: 16px 24px;
+      background: var(--paper);
+    }
+
+    #hlru-root button.hlru-btn {
+      font-family: 'JMH Typewriter', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      background: var(--ink);
+      color: var(--paper);
+      border: 2px solid var(--ink);
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #hlru-root button.hlru-btn:hover { background: #fff; color: var(--ink); }
+
+    #hlru-root button.hlru-btn.ghost { background: var(--paper); color: var(--ink); }
+
+    #hlru-root button.hlru-btn:disabled { opacity: 0.3; cursor: default; }
+
+    #hlru-root button.hlru-btn:disabled:hover { background: var(--ink); color: var(--paper); }
+
+    /* results */
+    #hlru-root .hlru-result { text-align: center; }
+
+    #hlru-root .hlru-score {
+      font-family: 'LKG Handwritten', 'Special Elite', monospace;
+      font-weight: 400;
+      font-size: 5rem;
+      line-height: 1;
+      margin: 20px 0 0;
+    }
+
+    #hlru-root .hlru-score-max { font-size: 1.6rem; color: var(--muted); }
+
+    #hlru-root .hlru-flair-tag {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 6px 12px;
+      margin: 12px auto 8px;
+      display: inline-block;
+    }
+
+    #hlru-root .hlru-verdict { font-size: 1rem; margin: 10px 0 22px; }
+
+    #hlru-root .hlru-breakdown {
+      text-align: left;
+      border: 2px solid var(--ink);
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      background: #fff;
+    }
+
+    #hlru-root .hlru-breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    #hlru-root .hlru-breakdown-row:last-child { border-bottom: none; }
+
+    #hlru-root details.hlru-math { margin-top: 16px; text-align: left; font-size: 0.8rem; }
+
+    #hlru-root summary { cursor: pointer; font-family: 'JMH Typewriter', monospace; font-size: 0.78rem; }
+
+    #hlru-root .hlru-restart {
+      background: none;
+      border: none;
+      text-decoration: underline;
+      font-family: 'JMH Typewriter', monospace;
+      cursor: pointer;
+      margin-top: 18px;
+      font-size: 0.85rem;
+    }
+
+    /* tooltips */
+    #hlru-root .hlru-tooltip-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1.5px solid var(--ink);
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.03em;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-top: 16px;
+      color: var(--ink);
+    }
+
+    #hlru-root .hlru-tooltip-toggle:hover { background: #eee; }
+
+    #hlru-root .hlru-tooltip-toggle .hlru-tooltip-icon {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      line-height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink);
+      text-align: center;
+      font-size: 0.68rem;
+    }
+
+    #hlru-root .hlru-tooltip-panel {
+      display: none;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--muted);
+      border-left: 3px solid var(--ink);
+      padding: 4px 0 4px 12px;
+      margin-top: 10px;
+    }
+
+    #hlru-root .hlru-tooltip-panel.open { display: block; }
+
+    /* likert scale (compass) */
+    #hlru-root .hlru-likert-item { margin-bottom: 16px; }
+
+    #hlru-root .hlru-likert-statement { font-size: 0.9rem; margin-bottom: 6px; line-height: 1.4; }
+
+    #hlru-root .hlru-likert-scale { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+
+    #hlru-root .hlru-likert-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      background: #fff;
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    #hlru-root .hlru-likert-circle:hover { background: #eee; }
+
+    #hlru-root .hlru-likert-circle.selected { background: var(--ink); color: var(--paper); }
+
+    #hlru-root .hlru-likert-caps {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* bonus checkbox */
+    #hlru-root .hlru-bonus {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      border: 1.5px dashed var(--ink);
+      padding: 10px 12px;
+      margin-top: 14px;
+      background: #fff;
+    }
+
+    #hlru-root .hlru-bonus input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+
+    #hlru-root .hlru-bonus-tag {
+      font-family: 'JMH Typewriter', monospace;
+      font-size: 0.68rem;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 1px 6px;
+      margin-right: 4px;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    /* share feedback */
+    #hlru-root .hlru-share-feedback {
+      font-size: 0.85rem;
+      color: var(--ink);
+      text-align: center;
+      min-height: 24px;
+      margin: 8px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #hlru-root .hlru-share-feedback.visible {
+      opacity: 1;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body::before {
+        height: 350px;
+      }
+
+      .page-container {
+        padding: 15px;
+      }
+
+      .page-header {
+        padding: 15px 10px;
+      }
+
+      #hlru-root h1 {
+        font-size: 2rem;
+      }
+
+      #hlru-root .hlru-sub {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      #hlru-root .hlru-score {
+        font-size: 3.5rem;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .nav-links a {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Larger tap targets for mobile */
+      #hlru-root .hlru-checklist input {
+        width: 24px;
+        height: 24px;
+        margin-top: 0;
+      }
+
+      #hlru-root .hlru-born input {
+        width: 24px;
+        height: 24px;
+      }
+
+      #hlru-root .hlru-bonus input {
+        width: 24px;
+        height: 24px;
+        margin-top: 0;
+      }
+
+      #hlru-root .hlru-checklist li {
+        gap: 12px;
+        margin-bottom: 16px;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      #hlru-root .hlru-bonus {
+        gap: 12px;
+        padding: 14px;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      /* Larger buttons for mobile */
+      #hlru-root button.hlru-btn {
+        font-size: 0.95rem;
+        padding: 14px 24px;
+        min-height: 48px;
+        min-width: 100px;
+      }
+
+      /* Larger likert circles for easier tapping */
+      #hlru-root .hlru-likert-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+      }
+
+      #hlru-root .hlru-likert-scale {
+        gap: 6px;
+        justify-content: space-between;
+      }
+
+      #hlru-root .hlru-likert-item {
+        margin-bottom: 20px;
+      }
+
+      #hlru-root .hlru-likert-statement {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      /* Better spacing for category rows */
+      #hlru-root .hlru-category-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      #hlru-root .hlru-category-label {
+        font-size: 0.95rem;
+        min-width: auto;
+      }
+
+      /* Larger form inputs */
+      #hlru-root input[type="number"],
+      #hlru-root input[type="text"],
+      #hlru-root select {
+        font-size: 1rem;
+        padding: 12px;
+        min-height: 48px;
+      }
+
+      #hlru-root input[type="range"] {
+        height: 40px;
+      }
+
+      /* More comfortable padding in quiz body */
+      #hlru-root .hlru-body {
+        padding: 24px 20px;
+      }
+
+      #hlru-root .hlru-head {
+        padding: 24px 20px 18px;
+      }
+
+      #hlru-root .hlru-progress {
+        padding: 12px 20px 0;
+      }
+
+      #hlru-root .hlru-nav {
+        padding: 16px 20px;
+      }
+
+      /* Tooltip buttons */
+      #hlru-root .hlru-tooltip-toggle {
+        font-size: 0.85rem;
+        padding: 10px 14px;
+        min-height: 44px;
+      }
+
+      /* Share button */
+      #hlru-root .hlru-share-feedback {
+        font-size: 0.95rem;
+      }
+
+      /* Better mobile spacing for results */
+      #hlru-root .hlru-breakdown {
+        font-size: 0.9rem;
+        padding: 16px;
+      }
+
+      #hlru-root .hlru-place-hint {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Page Header -->
+    <header class="page-header">
+      <img src="assets/hyperlocal masthead.png" alt="Hyperlocal Header" class="masthead-image">
+      <nav class="nav-links">
+        <a href="https://hyperlocaldispatch.com" target="_blank" rel="noopener">Back to Hyperlocal Homepage</a>
+        <a href="https://www.patreon.com/c/klgraywill" target="_blank" rel="noopener">Hyperlocal Monthly Dispatch on Patreon</a>
+      </nav>
+    </header>
+
+    <!-- Quiz Widget -->
+    <div class="quiz-container">
+      <div id="hlru-root">
+        <div class="hlru-head">
+          <h1>How Local R U?</h1>
+          <p class="hlru-sub">Calculate your L.O.C.A.L. variables and get your local score (0–10, 10 being the most local). It's like a Buzzfeed quiz, but nerdier and infinitely more tedious!</p>
+        </div>
+
+        <div class="hlru-progress" id="hlru-progress"></div>
+
+        <div class="hlru-body">
+
+          <!-- STEP 1: LIFESPAN -->
+          <div class="hlru-step" data-step="1">
+            <span class="hlru-qnum">01</span><span class="hlru-tag">LIFESPAN</span>
+            <h2>How long have you been living in this place?</h2>
+            <label for="hlru-l1">Years lived here</label>
+            <input type="number" id="hlru-l1" min="0" step="0.5" placeholder="e.g. 4">
+            <div class="hlru-born">
+              <input type="checkbox" id="hlru-born">
+              <label for="hlru-born" style="display:inline;">I grew up here</label>
+            </div>
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-1"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-1">While you do get a small boost for being able to claim heritage somewhere, we think time in a place is one of the most important driving factors for being a local.</div>
+          </div>
+
+          <!-- STEP 2: OUTREACH -->
+          <div class="hlru-step" data-step="2">
+            <span class="hlru-qnum">02</span><span class="hlru-tag">OUTREACH</span>
+            <h2>How about town are you?</h2>
+            <p class="hlru-place-hint" style="margin-top:-8px; margin-bottom:16px;">Excludes work/school. Only count activities within your local area.</p>
+
+            <div class="hlru-category-row">
+              <label class="hlru-category-label" for="hlru-cat-recreation">Recreation & Fitness</label>
+              <select class="hlru-category-freq" id="hlru-cat-recreation" data-category="recreation">
+                <option value="0">Never</option>
+                <option value="0.375">Rarely (1-2x/month)</option>
+                <option value="1">Sometimes (1x/week)</option>
+                <option value="2.5">Often (2-3x/week)</option>
+                <option value="4">Very Often (4+x/week)</option>
+              </select>
+            </div>
+            <p class="hlru-place-hint">Parks, gyms, trails, sports leagues, yoga studios</p>
+
+            <div class="hlru-category-row">
+              <label class="hlru-category-label" for="hlru-cat-food">Food & Beverage</label>
+              <select class="hlru-category-freq" id="hlru-cat-food" data-category="food">
+                <option value="0">Never</option>
+                <option value="0.375">Rarely (1-2x/month)</option>
+                <option value="1">Sometimes (1x/week)</option>
+                <option value="2.5">Often (2-3x/week)</option>
+                <option value="4">Very Often (4+x/week)</option>
+              </select>
+            </div>
+            <p class="hlru-place-hint">Restaurants, cafes, bars, farmers markets</p>
+
+            <div class="hlru-category-row">
+              <label class="hlru-category-label" for="hlru-cat-retail">Retail & Shopping</label>
+              <select class="hlru-category-freq" id="hlru-cat-retail" data-category="retail">
+                <option value="0">Never</option>
+                <option value="0.375">Rarely (1-2x/month)</option>
+                <option value="1">Sometimes (1x/week)</option>
+                <option value="2.5">Often (2-3x/week)</option>
+                <option value="4">Very Often (4+x/week)</option>
+              </select>
+            </div>
+            <p class="hlru-place-hint">Thrifting, shopping, going to pop-up markets</p>
+
+            <div class="hlru-category-row">
+              <label class="hlru-category-label" for="hlru-cat-social">Social & Cultural</label>
+              <select class="hlru-category-freq" id="hlru-cat-social" data-category="social">
+                <option value="0">Never</option>
+                <option value="0.375">Rarely (1-2x/month)</option>
+                <option value="1">Sometimes (1x/week)</option>
+                <option value="2.5">Often (2-3x/week)</option>
+                <option value="4">Very Often (4+x/week)</option>
+              </select>
+            </div>
+            <p class="hlru-place-hint">Clubs, meetups, community centers, classes, religious services</p>
+
+            <div class="hlru-category-row">
+              <label class="hlru-category-label" for="hlru-cat-civic">Civic Life</label>
+              <select class="hlru-category-freq" id="hlru-cat-civic" data-category="civic">
+                <option value="0">Never</option>
+                <option value="0.375">Rarely (1-2x/month)</option>
+                <option value="1">Sometimes (1x/week)</option>
+                <option value="2.5">Often (2-3x/week)</option>
+                <option value="4">Very Often (4+x/week)</option>
+              </select>
+            </div>
+            <p class="hlru-place-hint">Volunteering, local government meetings, community organizing</p>
+
+            <label class="hlru-bonus"><input type="checkbox" id="hlru-outreach-bonus"><span><span class="hlru-bonus-tag">BONUS +1</span>I regularly host or organize events/gatherings for others</span></label>
+
+            <label class="hlru-bonus" style="border-color:#d32f2f;"><input type="checkbox" id="hlru-chain-penalty"><span><span class="hlru-bonus-tag" style="background:#d32f2f;">PENALTY -1</span>I went to a chain restaurant in the last week</span></label>
+
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-2"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-2">This variable rewards both how often you engage in local activities and the diversity of your engagement across different categories. Being active in multiple categories shows you're well-integrated into your community.</div>
+          </div>
+
+          <!-- STEP 3: HYPERLOCAL FACTOR -->
+          <div class="hlru-step" data-step="3">
+            <span class="hlru-qnum">03</span><span class="hlru-tag">HYPERLOCAL FACTOR</span>
+            <h2>What is the furthest you travel outside your home on an average day (in miles)?</h2>
+            <label for="hlru-h">Distance (miles)</label>
+            <input type="number" id="hlru-h" min="0.1" step="0.1" placeholder="e.g. 3">
+
+            <p style="font-size:0.85rem; margin-top:16px; margin-bottom:8px; font-weight:700;">What modes of transit do you use?</p>
+            <p class="hlru-place-hint" style="margin-top:0; margin-bottom:12px;">Check all that apply</p>
+
+            <ul class="hlru-checklist" id="hlru-transit-list">
+              <li><input type="checkbox" data-transit="walking"> Walking</li>
+              <li><input type="checkbox" data-transit="bicycle"> Bicycle</li>
+              <li><input type="checkbox" data-transit="bus"> Bus</li>
+              <li><input type="checkbox" data-transit="lightrail"> Light rail</li>
+              <li><input type="checkbox" data-transit="subway"> Subway / Metro</li>
+              <li><input type="checkbox" data-transit="car"> Car</li>
+              <li style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" data-transit="other" id="hlru-transit-other"> Other:
+                <input type="text" id="hlru-transit-other-text" placeholder="e.g., e-scooter, skateboard" style="flex: 1; max-width: 200px;">
+              </li>
+            </ul>
+
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-3"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-3">The "hyperlocal" factor rewards smaller numbers, so if you live a smaller (more hyperlocal) life, you will get a boost. However, it does not penalize you for traveling further if your lifestyle requires it (e.g. commuting to another city).</div>
+          </div>
+
+          <!-- STEP 4: COMPASS -->
+          <div class="hlru-step" data-step="4">
+            <span class="hlru-qnum">04</span><span class="hlru-tag">COMPASS</span>
+            <h2>How good is your lay of the land?</h2>
+            <p class="hlru-place-hint" style="margin-left:0; margin-top:-8px; margin-bottom:16px;">Where 1 is "not really" and 5 is "completely."</p>
+            <ul class="hlru-checklist" id="hlru-compass-list" style="margin-top:10px;">
+              <li class="hlru-likert-item">
+                <div class="hlru-likert-statement">I can give directions without my phone</div>
+                <div class="hlru-likert-scale" data-likert-group="compass">
+                  <button type="button" class="hlru-likert-circle" data-value="1">1</button>
+                  <button type="button" class="hlru-likert-circle" data-value="2">2</button>
+                  <button type="button" class="hlru-likert-circle" data-value="3">3</button>
+                  <button type="button" class="hlru-likert-circle" data-value="4">4</button>
+                  <button type="button" class="hlru-likert-circle" data-value="5">5</button>
+                </div>
+              </li>
+              <li class="hlru-likert-item">
+                <div class="hlru-likert-statement">I know lots of shortcuts</div>
+                <div class="hlru-likert-scale" data-likert-group="compass">
+                  <button type="button" class="hlru-likert-circle" data-value="1">1</button>
+                  <button type="button" class="hlru-likert-circle" data-value="2">2</button>
+                  <button type="button" class="hlru-likert-circle" data-value="3">3</button>
+                  <button type="button" class="hlru-likert-circle" data-value="4">4</button>
+                  <button type="button" class="hlru-likert-circle" data-value="5">5</button>
+                </div>
+              </li>
+              <li class="hlru-likert-item">
+                <div class="hlru-likert-statement">I can orient myself based on local landmarks</div>
+                <div class="hlru-likert-scale" data-likert-group="compass">
+                  <button type="button" class="hlru-likert-circle" data-value="1">1</button>
+                  <button type="button" class="hlru-likert-circle" data-value="2">2</button>
+                  <button type="button" class="hlru-likert-circle" data-value="3">3</button>
+                  <button type="button" class="hlru-likert-circle" data-value="4">4</button>
+                  <button type="button" class="hlru-likert-circle" data-value="5">5</button>
+                </div>
+              </li>
+              <li class="hlru-likert-item">
+                <div class="hlru-likert-statement">I regularly navigate without GPS</div>
+                <div class="hlru-likert-scale" data-likert-group="compass">
+                  <button type="button" class="hlru-likert-circle" data-value="1">1</button>
+                  <button type="button" class="hlru-likert-circle" data-value="2">2</button>
+                  <button type="button" class="hlru-likert-circle" data-value="3">3</button>
+                  <button type="button" class="hlru-likert-circle" data-value="4">4</button>
+                  <button type="button" class="hlru-likert-circle" data-value="5">5</button>
+                </div>
+              </li>
+              <li class="hlru-likert-item">
+                <div class="hlru-likert-statement">I can name most neighborhoods/boroughs</div>
+                <div class="hlru-likert-scale" data-likert-group="compass">
+                  <button type="button" class="hlru-likert-circle" data-value="1">1</button>
+                  <button type="button" class="hlru-likert-circle" data-value="2">2</button>
+                  <button type="button" class="hlru-likert-circle" data-value="3">3</button>
+                  <button type="button" class="hlru-likert-circle" data-value="4">4</button>
+                  <button type="button" class="hlru-likert-circle" data-value="5">5</button>
+                </div>
+              </li>
+            </ul>
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-4"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-4">This variable is self-reported based on your spatial understanding of neighborhood boundaries, navigation, and internal "compass."</div>
+          </div>
+
+          <!-- STEP 5: AUTHENTICITY -->
+          <div class="hlru-step" data-step="5">
+            <span class="hlru-qnum">05</span><span class="hlru-tag">AUTHENTICITY</span>
+            <h2>This is your proof of life — do you have a read on the local vibes? What are the neighborhood hot takes?</h2>
+            <ul class="hlru-checklist" id="hlru-auth-list">
+              <li><input type="checkbox" data-group="auth"> I know at least one local gripe or have my own neighborhood rant</li>
+              <li><input type="checkbox" data-group="auth"> I can claim I went to X spot when it was still Y</li>
+              <li><input type="checkbox" data-group="auth"> I'm regular enough somewhere that someone who works there knows my name</li>
+              <li><input type="checkbox" data-group="auth"> I've personally introduced someone to a local tradition</li>
+              <li><input type="checkbox" data-group="auth"> I know a local joint or event a tourist would never find on Yelp or IG reels</li>
+            </ul>
+            <label class="hlru-bonus"><input type="checkbox" id="hlru-auth-bonus"><span><span class="hlru-bonus-tag">BONUS +1</span>I have taken direct action to improve something in my neighborhood</span></label>
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-5"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-5">This is another self-reported variable based on your closeness to the issues that plague your neighborhood. Think: "When is construction on that lot finally going to end?" "I can't believe they haven't fixed that traffic light yet!" "I wonder what's going to open where that business closed..."</div>
+          </div>
+
+          <!-- STEP 6: LORE -->
+          <div class="hlru-step" data-step="6">
+            <span class="hlru-qnum">06</span><span class="hlru-tag">LORE</span>
+            <h2>Do you know the lore?</h2>
+            <div class="hlru-slider-wrap">
+              <input type="range" id="hlru-lore" min="0" max="5" step="1" value="0">
+              <div class="hlru-slider-labels">
+                <span>0 · don't know shit</span>
+                <span>5 · practically a tour guide</span>
+              </div>
+              <div class="hlru-slider-val" id="hlru-lore-val">0</div>
+            </div>
+            <label class="hlru-bonus"><input type="checkbox" id="hlru-lore-bonus"><span><span class="hlru-bonus-tag">BONUS +1</span>I have explained something about local history to someone who was born here</span></label>
+            <button type="button" class="hlru-tooltip-toggle" data-tooltip-target="tt-6"><span class="hlru-tooltip-icon">i</span> why this matters</button>
+            <div class="hlru-tooltip-panel" id="tt-6">This can be contemporary or historical lore. Lore can be the history of a building, and it can be a notorious policy failure that everyone remembers (e.g. did your city also kill a proposed light rail or transit extension? Ours too... and yeah we ALL remember that shit).</div>
+          </div>
+
+          <!-- RESULTS -->
+          <div class="hlru-step" data-step="7">
+            <div class="hlru-result">
+              <div class="hlru-tag" style="margin-left:0;">YOUR L.O.C.A.L. SCORE</div>
+              <div class="hlru-score"><span id="hlru-score-num">0.0</span><span class="hlru-score-max">/10</span></div>
+              <div class="hlru-flair-tag" id="hlru-flair" style="display:none;"></div>
+              <p class="hlru-verdict" id="hlru-verdict"></p>
+              <div class="hlru-breakdown" id="hlru-breakdown"></div>
+              <details class="hlru-math">
+                <summary>about the equation</summary>
+                <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">The function that underlies your score is a logistic growth curve, a mathematical model that produces a distinctive S-shaped (sigmoid) graph, commonly used to describe growth, spread, or probability that starts exponentially but slows down and eventually levels off as it reaches a maximum limiting value.</div>
+              </details>
+              <details class="hlru-math">
+                <summary>about local flair</summary>
+                <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">This flair is assigned to you based on your years lived, whether you were born in the area, your civic engagement patterns, how often you visit local places, and your knowledge of local lore.</div>
+              </details>
+              <details class="hlru-math">
+                <summary>show your math</summary>
+                <div id="hlru-math-body" style="margin-top:10px;"></div>
+              </details>
+              <p style="font-size:0.78rem; color:var(--ink); margin-top:14px; line-height:1.6;">The Local Formula was developed by <a href="https://www.hyperlocaldispatch.com/about" target="_blank" rel="noopener" style="color:var(--ink);">K. L. Graywill</a> for the Hyperlocal Dispatch July 2026 edition "The Hyperlocal Habit: A Practical Guide to Finding Belonging Anywhere." Additional math-y support from <a href="https://alexkritchevsky.com/" target="_blank" rel="noopener" style="color:var(--ink);">Alex Kritchevsky</a> and Andrew Evans.</p>
+              <br>
+              <button class="hlru-btn" id="hlru-share" style="margin-bottom:12px;">Share My Score</button>
+              <div class="hlru-share-feedback" id="hlru-share-feedback"></div>
+              <button class="hlru-restart" id="hlru-restart">start over</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hlru-nav">
+          <button class="hlru-btn ghost" id="hlru-back">Back</button>
+          <button class="hlru-btn" id="hlru-next">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var TOTAL_STEPS = 7; // 6 questions + results
+    var current = 1;
+
+    var root = document.getElementById('hlru-root');
+    var progressEl = document.getElementById('hlru-progress');
+    var backBtn = document.getElementById('hlru-back');
+    var nextBtn = document.getElementById('hlru-next');
+
+    // build progress segments (6 question segments, results not counted)
+    for (var i = 0; i < 6; i++) {
+      var seg = document.createElement('div');
+      seg.className = 'hlru-progress-seg';
+      progressEl.appendChild(seg);
+    }
+
+    function updateProgress() {
+      var segs = progressEl.querySelectorAll('.hlru-progress-seg');
+      segs.forEach(function(s, idx) {
+        s.classList.toggle('done', idx < current);
+      });
+      progressEl.style.display = current > 6 ? 'none' : 'flex';
+    }
+
+    function showStep(n) {
+      root.querySelectorAll('.hlru-step').forEach(function(el) {
+        el.classList.toggle('active', parseInt(el.dataset.step, 10) === n);
+      });
+      backBtn.style.visibility = n === 1 ? 'hidden' : 'visible';
+      nextBtn.textContent = n === 6 ? 'See my score' : (n === 7 ? 'Done' : 'Next');
+      if (n === 7) {
+        nextBtn.style.display = 'none';
+      } else {
+        nextBtn.style.display = 'inline-block';
+      }
+      updateProgress();
+      if (n === 7) calculateScore();
+    }
+
+    backBtn.addEventListener('click', function() {
+      if (current > 1) { current--; showStep(current); }
+    });
+    nextBtn.addEventListener('click', function() {
+      if (current < 7) { current++; showStep(current); }
+    });
+
+    document.getElementById('hlru-restart').addEventListener('click', function() {
+      current = 1;
+      showStep(current);
+    });
+
+    // ---------- TOOLTIPS ----------
+    root.querySelectorAll('.hlru-tooltip-toggle').forEach(function(btn) {
+      var panel = document.getElementById(btn.dataset.tooltipTarget);
+      btn.addEventListener('click', function() {
+        var isOpen = panel.classList.toggle('open');
+        btn.querySelector('.hlru-tooltip-icon').textContent = isOpen ? '×' : 'i';
+      });
+    });
+
+    // ---------- LORE slider live value ----------
+    var loreSlider = document.getElementById('hlru-lore');
+    var loreVal = document.getElementById('hlru-lore-val');
+    loreSlider.addEventListener('input', function() {
+      loreVal.textContent = loreSlider.value;
+    });
+
+    // ---------- COMPASS: likert circles ----------
+    root.querySelectorAll('.hlru-likert-scale').forEach(function(scale) {
+      scale.dataset.value = '0';
+      scale.querySelectorAll('.hlru-likert-circle').forEach(function(circle) {
+        circle.addEventListener('click', function() {
+          scale.dataset.value = circle.dataset.value;
+          scale.querySelectorAll('.hlru-likert-circle').forEach(function(c) {
+            c.classList.toggle('selected', c === circle);
+          });
+        });
+      });
+    });
+
+    // ---------- FORMULA ----------
+    function clampMin(v, min) { return v < min ? min : v; }
+
+    function determineLocalFlair(yearsLived, bornHere, frequencies, activeCategories, loreScore, hasDirectAction, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, compassScore) {
+      // Calculate nostalgia cop: active in 1-2 categories with high frequency
+      var totalFrequency = frequencies.reduce(function(a, b) { return a + b; }, 0);
+      var avgFrequency = frequencies.length > 0 ? totalFrequency / frequencies.length : 0;
+      var isNostalgiaCop = activeCategories <= 2 && avgFrequency >= 2.5;
+
+      // Check for Transitmaxxer: at least 2 transit modes AND compass score > 2.5
+      var isTransitmaxxer = transitModes.length >= 2 && compassScore > 2.5;
+
+      // Check for Local Economy Angel Investor: high food/bev AND high retail/shopping
+      var isLocalEconomyAngel = foodFreq >= 2.5 && retailFreq >= 1;
+
+      // Priority order for flair assignment
+      if (bornHere === 1) {
+        return 'Hometown Lifer';
+      }
+
+      // Civic Evangelist: has direct action bonus AND civic engagement frequency is high
+      if (hasDirectAction === 1 && civicFreq >= 1) {
+        return 'Civic Evangelist';
+      }
+
+      // Alternative Civic Evangelist: hosts events AND active in civic life
+      if (hostBonus === 1 && civicFreq >= 0.375) {
+        return 'Civic Evangelist';
+      }
+
+      if (loreScore >= 5) {
+        return 'Lore Expert';
+      }
+
+      if (isLocalEconomyAngel) {
+        return 'Local Economy Angel Investor';
+      }
+
+      if (isTransitmaxxer) {
+        return 'Transitmaxxer';
+      }
+
+      if (isNostalgiaCop) {
+        return 'Nostalgia Cop';
+      }
+
+      if (yearsLived >= 10) {
+        return 'Heritage Flexer';
+      }
+
+      if (yearsLived > 0 && yearsLived <= 5) {
+        return 'Reluctant Gentrifier';
+      }
+
+      return null;
+    }
+
+    function calculateScore() {
+      var x = parseFloat(document.getElementById('hlru-l1').value) || 0;   // L1, lifespan
+      var n = document.getElementById('hlru-born').checked ? 1 : 0;
+
+      // Get category frequencies
+      var categorySelects = root.querySelectorAll('[data-category]');
+      var freqs = [];
+      var activeCategories = 0;
+      var totalFrequency = 0;
+
+      categorySelects.forEach(function(select) {
+        var freq = parseFloat(select.value) || 0;
+        if (freq > 0) {
+          freqs.push(freq);
+          activeCategories++;
+          totalFrequency += freq;
+        }
+      });
+
+      // Add bonus for hosting events and penalty for chain restaurants
+      var hostBonus = document.getElementById('hlru-outreach-bonus').checked ? 1 : 0;
+      var chainPenalty = document.getElementById('hlru-chain-penalty').checked ? 1 : 0;
+
+      // Calculate theta: weighted by frequency sum and diversity of categories
+      // Higher diversity (more categories) and higher frequency both increase theta
+      var T = totalFrequency + (hostBonus * 2) - (chainPenalty * 1); // hosting gives bonus, chains give penalty
+      var diversityBonus = activeCategories > 0 ? Math.log(activeCategories + 1) : 0;
+      var theta = T * (1 + diversityBonus * 0.3);
+      theta = clampMin(theta, 1); // guards ln(0); theta=0 (no outings) floors to 1 -> ln(1)=0
+
+      var H = clampMin(parseFloat(document.getElementById('hlru-h').value) || 0.1, 0.1);
+
+      var likertScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+      var likertSum = 0;
+      likertScales.forEach(function(s) { likertSum += parseInt(s.dataset.value || '0', 10); });
+      var C = likertSum / likertScales.length; // average of 5 statements, 0-5
+
+      var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length; // 0-5
+      var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+      var A = authBase + authBonus; // 0-6
+
+      var loreBonus = document.getElementById('hlru-lore-bonus').checked ? 1 : 0;
+      var L2 = parseInt(loreSlider.value, 10) + loreBonus; // 0-6
+
+      // k = steepness factor (bigger H -> smaller k -> slower to max; more theta -> steeper)
+      var k = 1 + (1 / H) + (Math.log(theta) / 7);
+      var fracTerm = (-x + (x * n / 2)) / 5;
+      var exponent = k * fracTerm; // logistic exponent = k * (years term)
+      var inner = 1 + Math.exp(exponent);
+      var base = 20 / inner;
+      var multiplier = 0.5 + (C + A + L2) / 17; // 0.5-1.5ish, centered at 1.0 (max sum is 5+6+6=17 with bonuses)
+      var rawScore = base * multiplier - 10;
+      var score = Math.max(0, Math.min(10, rawScore));
+
+      document.getElementById('hlru-score-num').textContent = score.toFixed(1);
+
+      var verdict;
+      if (score >= 9) verdict = "You ARE the local vibe. Or you've been here way too long. Either way, you're truly a local.";
+      else if (score >= 7) verdict = "Certifiably local. You're pretty about town.";
+      else if (score >= 4) verdict = "You are local-adjacent.";
+      else if (score >= 1.5) verdict = "Still finding your footing around here.";
+      else verdict = "You could be anywhere right now, honestly.";
+      document.getElementById('hlru-verdict').textContent = verdict;
+
+      // ---------- LOCAL FLAIR ASSIGNMENT ----------
+      var civicFreq = parseFloat(document.getElementById('hlru-cat-civic').value) || 0;
+      var foodFreq = parseFloat(document.getElementById('hlru-cat-food').value) || 0;
+      var retailFreq = parseFloat(document.getElementById('hlru-cat-retail').value) || 0;
+
+      // Collect transit modes
+      var transitInputs = root.querySelectorAll('#hlru-transit-list input[data-transit]:checked');
+      var transitModes = [];
+      transitInputs.forEach(function(input) {
+        var mode = input.getAttribute('data-transit');
+        if (mode === 'other') {
+          var otherText = document.getElementById('hlru-transit-other-text').value.trim();
+          if (otherText) {
+            transitModes.push('other: ' + otherText);
+          }
+        } else {
+          transitModes.push(mode);
+        }
+      });
+
+      var localFlair = determineLocalFlair(x, n, freqs, activeCategories, L2, authBonus, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, C);
+      var flairElement = document.getElementById('hlru-flair');
+      if (flairElement && localFlair) {
+        flairElement.textContent = localFlair;
+        flairElement.style.display = 'inline-block';
+      }
+
+      var breakdown = document.getElementById('hlru-breakdown');
+      breakdown.innerHTML =
+        row('L1 · lifespan', x + ' yrs' + (n ? ' (grew up here)' : '')) +
+        row('θ · outreach', theta.toFixed(2)) +
+        row('H · hyperlocal factor', H + ' mi') +
+        row('C · compass', C.toFixed(1) + '/5') +
+        row('A · authenticity', A + '/6') +
+        row('L2 · lore', L2 + '/6');
+
+      document.getElementById('hlru-math-body').innerHTML =
+        '<div>k = 1 + 1/H + ln(θ)/7 = ' + k.toFixed(3) + '</div>' +
+        '<div>frac term = (-x + x·n/2)/5 = ' + fracTerm.toFixed(3) + '</div>' +
+        '<div>exponent = k · frac term = ' + exponent.toFixed(3) + '</div>' +
+        '<div>base = 20 / (1 + e^exponent) = ' + base.toFixed(3) + '</div>' +
+        '<div>multiplier = 0.5 + (C+A+L2)/17 = ' + multiplier.toFixed(3) + '</div>' +
+        '<div>raw score = base · multiplier − 10 = ' + rawScore.toFixed(3) + '</div>' +
+        '<div style="margin-top:6px;">displayed score is raw score clamped to [0,10]. C averages 5 likert statements (0-5); A and L2 each include a +1 bonus checkbox (0-6).</div>';
+
+      function row(label, val) {
+        return '<div class="hlru-breakdown-row"><span>' + label + '</span><span>' + val + '</span></div>';
+      }
+    }
+
+    // ---------- SHARE SCORE ----------
+    var shareBtn = document.getElementById('hlru-share');
+    var shareFeedback = document.getElementById('hlru-share-feedback');
+
+    if (shareBtn && shareFeedback) {
+      shareBtn.addEventListener('click', function() {
+        var score = document.getElementById('hlru-score-num').textContent;
+        var verdict = document.getElementById('hlru-verdict').textContent;
+        var flair = document.getElementById('hlru-flair').textContent;
+        var quizURL = 'https://hyperlocaldispatch.com/quiz';
+
+        // Shorten verdict to first sentence
+        var shortVerdict = verdict.split('.')[0];
+
+        var shareText = 'I scored ' + score + '/10 on the How Local R U? quiz!\n';
+        shareText += 'I am ' + shortVerdict.toLowerCase() + '.';
+        if (flair) {
+          shareText += ' My local flair is "' + flair + '"';
+        }
+        shareText += '\n\nCalculate your L.O.C.A.L. score: ' + quizURL;
+
+        // Try Web Share API first (mobile-friendly, native share sheet)
+        if (navigator.share) {
+          navigator.share({
+            title: 'My L.O.C.A.L. Score',
+            text: shareText
+          }).then(function() {
+            showShareFeedback('Shared successfully!');
+          }).catch(function(err) {
+            if (err.name !== 'AbortError') {
+              fallbackCopy(shareText);
+            }
+          });
+        } else {
+          fallbackCopy(shareText);
+        }
+      });
+
+      function fallbackCopy(text) {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          showShareFeedback('Score copied to clipboard!');
+        } catch (err) {
+          showShareFeedback('Unable to copy. Please try again.');
+        }
+        document.body.removeChild(textarea);
+      }
+
+      function showShareFeedback(message) {
+        shareFeedback.textContent = message;
+        shareFeedback.classList.add('visible');
+        setTimeout(function() {
+          shareFeedback.classList.remove('visible');
+        }, 3000);
+      }
+    }
+
+    showStep(current);
+  })();
+  </script>
+</body>
+</html>
