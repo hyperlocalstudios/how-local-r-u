@@ -1580,23 +1580,44 @@
 
       var maxCount = Math.max.apply(null, distribution);
 
-      // Display score distribution as horizontal bars
+      // Display score distribution as vertical bars (scores 0-10 on x-axis)
       var distHTML = '';
+
+      // Container for the vertical bar chart
+      distHTML += '<div style="display:flex; flex-direction:column; gap:8px;">';
+
+      // Bar chart area
+      distHTML += '<div style="display:flex; align-items:flex-end; justify-content:space-between; height:150px; border-bottom:2px solid var(--ink); padding:0 4px;">';
+
       for (var i = 0; i <= 10; i++) {
         var count = distribution[i];
-        var percentage = maxCount > 0 ? (count / maxCount * 100) : 0;
+        var heightPercentage = maxCount > 0 ? (count / maxCount * 100) : 0;
         var isUserBucket = Math.floor(userScore) === i;
 
-        distHTML += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">';
-        distHTML += '<span style="font-size:0.75rem; min-width:30px; color:var(--muted);">' + i + '-' + (i + 1) + '</span>';
-        distHTML += '<div style="flex:1; background:#f0f0f0; height:20px; position:relative; border:1px solid var(--grid);">';
+        distHTML += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; position:relative;">';
+
+        // The bar itself
+        distHTML += '<div style="width:100%; max-width:40px; background:' + (isUserBucket ? '#d32f2f' : 'var(--muted)') + '; height:' + heightPercentage + '%; min-height:' + (count > 0 ? '4px' : '0') + '; border:' + (count > 0 ? '1.5px solid var(--ink)' : 'none') + '; border-bottom:none; transition:height 0.3s ease;"></div>';
+
+        // Count label above bar (only if count > 0)
         if (count > 0) {
-          distHTML += '<div style="background:' + (isUserBucket ? '#d32f2f' : 'var(--muted)') + '; height:100%; width:' + percentage + '%;"></div>';
+          distHTML += '<span style="position:absolute; top:-18px; font-size:0.7rem; font-weight:700; color:' + (isUserBucket ? '#d32f2f' : 'var(--ink)') + ';">' + count + '</span>';
         }
-        distHTML += '</div>';
-        distHTML += '<span style="font-size:0.75rem; min-width:25px; color:var(--muted);">' + count + '</span>';
+
         distHTML += '</div>';
       }
+
+      distHTML += '</div>';
+
+      // X-axis labels (scores 0-10)
+      distHTML += '<div style="display:flex; justify-content:space-between; padding:4px 4px 0;">';
+      for (var i = 0; i <= 10; i++) {
+        var isUserBucket = Math.floor(userScore) === i;
+        distHTML += '<div style="flex:1; text-align:center; font-size:0.75rem; font-weight:' + (isUserBucket ? '700' : '400') + '; color:' + (isUserBucket ? '#d32f2f' : 'var(--muted)') + ';">' + i + '</div>';
+      }
+      distHTML += '</div>';
+
+      distHTML += '</div>';
 
       document.getElementById('hlru-score-distribution').innerHTML = distHTML;
       document.getElementById('hlru-user-score-marker').textContent = userScore.toFixed(1);
