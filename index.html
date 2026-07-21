@@ -928,11 +928,68 @@
           <!-- RESULTS -->
           <div class="hlru-step" data-step="7">
             <div class="hlru-result">
+              <!-- Score Section -->
               <div class="hlru-tag" style="margin-left:0;">YOUR L.O.C.A.L. SCORE</div>
               <div class="hlru-score"><span id="hlru-score-num">0.0</span><span class="hlru-score-max">/10</span></div>
-              <div class="hlru-flair-tag" id="hlru-flair" style="display:none;"></div>
               <p class="hlru-verdict" id="hlru-verdict"></p>
-              <div class="hlru-breakdown" id="hlru-breakdown"></div>
+
+              <!-- What Kind of Local Am I? Section -->
+              <div style="margin-top:24px;">
+                <h3 style="font-family: 'JMH Typewriter', monospace; font-size:1.1rem; margin-bottom:16px; font-weight:700; text-align:center;">What kind of local am I?</h3>
+                <div id="hlru-flair-bars"></div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button class="hlru-btn" id="hlru-share">Share My Score</button>
+                <button class="hlru-btn ghost" id="hlru-scoreboard-toggle">Community Scoreboard</button>
+              </div>
+              <div class="hlru-share-feedback" id="hlru-share-feedback"></div>
+
+              <!-- Community Scoreboard Panel (hidden by default) -->
+              <div id="hlru-scoreboard-panel" style="display:none; margin-top:24px; border:2px solid var(--ink); background:#fff; padding:20px;">
+                <h3 style="font-family: 'JMH Typewriter', monospace; font-size:1.1rem; margin-bottom:16px; font-weight:700;">Community Scoreboard</h3>
+
+                <!-- Top Zipcodes Leaderboard -->
+                <div id="hlru-top-zipcodes" style="margin-bottom:24px;">
+                  <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">🏆 Top Scoring Zipcodes</h4>
+                  <div id="hlru-leaderboard">Loading...</div>
+                </div>
+
+                <!-- Zipcode Input -->
+                <div style="border-top:2px solid var(--grid); padding-top:20px;">
+                  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">See how your zipcode stacks up:</p>
+                  <input type="text" id="hlru-zipcode" placeholder="my five digit US zipcode" maxlength="5" pattern="[0-9]{5}" style="font-family: 'JMH Typewriter', monospace; font-size:0.9rem; border:2px solid var(--ink); background:#fff; padding:8px 12px; width:100%; max-width:220px; margin-bottom:8px;">
+                  <br>
+                  <button class="hlru-btn" id="hlru-submit-data" style="font-size:0.7rem; padding:6px 12px; margin-top:4px;">Share my score</button>
+                  <div class="hlru-share-feedback" id="hlru-data-feedback"></div>
+                </div>
+
+                <!-- Zipcode Stats (hidden until submitted) -->
+                <div id="hlru-zipcode-stats" style="display:none; margin-top:20px; border-top:2px solid var(--grid); padding-top:20px;">
+                  <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">📍 Zipcode <span id="hlru-display-zip"></span></h4>
+
+                  <!-- Score Distribution Graph -->
+                  <div style="margin-bottom:20px;">
+                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Score Distribution</p>
+                    <div id="hlru-score-distribution"></div>
+                    <div style="font-size:0.75rem; color:var(--muted); margin-top:8px;">
+                      <span style="color:#d32f2f;">●</span> Your score: <span id="hlru-user-score-marker"></span>
+                    </div>
+                  </div>
+
+                  <!-- Popular Flairs -->
+                  <div>
+                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Most Popular Flairs</p>
+                    <div id="hlru-zipcode-flairs"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Score Breakdown -->
+              <div class="hlru-breakdown" id="hlru-breakdown" style="margin-top:32px;"></div>
+
+              <!-- Collapsible Info Sections -->
               <details class="hlru-math">
                 <summary>about the equation</summary>
                 <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">The function that underlies your score is a logistic growth curve, a mathematical model that produces a distinctive S-shaped (sigmoid) graph, commonly used to describe growth, spread, or probability that starts exponentially but slows down and eventually levels off as it reaches a maximum limiting value.</div>
@@ -945,51 +1002,11 @@
                 <summary>show your math</summary>
                 <div id="hlru-math-body" style="margin-top:10px;"></div>
               </details>
+
+              <!-- Attribution -->
               <p style="font-size:0.78rem; color:var(--ink); margin-top:14px; line-height:1.6;">The Local Formula was developed by <a href="https://www.hyperlocaldispatch.com/about" target="_blank" rel="noopener" style="color:var(--ink);">K. L. Graywill</a> for the Hyperlocal Dispatch July 2026 edition "The Hyperlocal Habit: A Practical Guide to Finding Belonging Anywhere." Additional math-y support from <a href="https://alexkritchevsky.com/" target="_blank" rel="noopener" style="color:var(--ink);">Alex Kritchevsky</a> and Andrew Evans.</p>
 
-              <!-- Community Data Section -->
-              <div class="hlru-community-section" id="hlru-community-section" style="margin-top:24px; border-top: 2px solid var(--ink); padding-top:20px;">
-                <h3 style="font-family: 'JMH Typewriter', monospace; font-size:1.1rem; margin-bottom:12px; font-weight:700;">See How Your Community Scores</h3>
-                <p style="font-size:0.85rem; color:var(--muted); line-height:1.6; margin-bottom:16px;">Share your zipcode to see average scores in your area and compare local flair distribution. Your data helps us understand hyperlocal trends!</p>
-
-                <div id="hlru-zipcode-form">
-                  <label for="hlru-zipcode" style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:8px;">Your Zipcode</label>
-                  <input type="text" id="hlru-zipcode" placeholder="e.g. 27701" maxlength="10" style="font-family: 'JMH Typewriter', monospace; font-size:1rem; border:2px solid var(--ink); background:#fff; padding:10px; width:100%; max-width:200px; margin-bottom:12px;">
-
-                  <label class="hlru-consent-checkbox" style="display:flex; align-items:flex-start; gap:10px; font-size:0.85rem; line-height:1.5; margin-bottom:16px; cursor:pointer;">
-                    <input type="checkbox" id="hlru-consent" style="width:20px; height:20px; margin-top:2px; flex-shrink:0; cursor:pointer;">
-                    <span>I consent to share my anonymized score, zipcode, and local flair data for community statistics and research purposes.</span>
-                  </label>
-
-                  <button class="hlru-btn" id="hlru-submit-data" style="margin-bottom:12px;">View Community Stats</button>
-                  <div class="hlru-share-feedback" id="hlru-data-feedback"></div>
-                </div>
-
-                <!-- Community Statistics Display (hidden until data submitted) -->
-                <div id="hlru-community-stats" style="display:none; margin-top:20px;">
-                  <div style="background:#fff; border:2px solid var(--ink); padding:16px; margin-bottom:16px;">
-                    <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">📍 Your Area (Zipcode: <span id="hlru-display-zip"></span>)</h4>
-                    <div class="hlru-breakdown-row">
-                      <span style="font-weight:700;">Average Score:</span>
-                      <span id="hlru-area-avg">Loading...</span>
-                    </div>
-                    <div class="hlru-breakdown-row" style="border-bottom:none;">
-                      <span style="font-weight:700;">Total Responses:</span>
-                      <span id="hlru-area-count">Loading...</span>
-                    </div>
-                  </div>
-
-                  <div style="background:#fff; border:2px solid var(--ink); padding:16px;">
-                    <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">🏆 Local Flair Distribution (Your Area)</h4>
-                    <div id="hlru-flair-distribution">Loading...</div>
-                  </div>
-                </div>
-              </div>
-
-              <br>
-              <button class="hlru-btn" id="hlru-share" style="margin-bottom:12px;">Share My Score</button>
-              <div class="hlru-share-feedback" id="hlru-share-feedback"></div>
-              <button class="hlru-restart" id="hlru-restart">start over</button>
+              <button class="hlru-restart" id="hlru-restart" style="margin-top:20px;">start over</button>
             </div>
           </div>
 
@@ -1086,6 +1103,88 @@
 
     // ---------- FORMULA ----------
     function clampMin(v, min) { return v < min ? min : v; }
+
+    function calculateAllFlairScores(yearsLived, bornHere, frequencies, activeCategories, loreScore, hasDirectAction, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, compassScore) {
+      var totalFrequency = frequencies.reduce(function(a, b) { return a + b; }, 0);
+      var avgFrequency = frequencies.length > 0 ? totalFrequency / frequencies.length : 0;
+
+      var scores = {};
+
+      // Hometown Lifer
+      scores['Hometown Lifer'] = bornHere === 1 ? 100 : 0;
+
+      // Civic Evangelist
+      var civicScore = 0;
+      if (hasDirectAction === 1 && civicFreq >= 1) civicScore = 90;
+      else if (hostBonus === 1 && civicFreq >= 0.375) civicScore = 85;
+      scores['Civic Evangelist'] = civicScore;
+
+      // Lore Expert
+      scores['Lore Expert'] = (loreScore / 6) * 100;
+
+      // Local Economy Angel Investor
+      var economyScore = 0;
+      if (foodFreq >= 2.5 && retailFreq >= 1) economyScore = 80;
+      scores['Local Economy Angel Investor'] = economyScore;
+
+      // Transitmaxxer
+      var transitScore = 0;
+      if (transitModes.length >= 2 && compassScore > 2.5) transitScore = 75;
+      scores['Transitmaxxer'] = transitScore;
+
+      // Nostalgia Cop
+      var nostalgiaScore = 0;
+      if (activeCategories <= 2 && avgFrequency >= 2.5) nostalgiaScore = 70;
+      scores['Nostalgia Cop'] = nostalgiaScore;
+
+      // Heritage Flexer
+      scores['Heritage Flexer'] = yearsLived >= 10 ? 65 : (yearsLived / 10) * 65;
+
+      // Reluctant Gentrifier
+      var gentrifierScore = 0;
+      if (yearsLived > 0 && yearsLived <= 5) gentrifierScore = ((5 - yearsLived) / 5) * 60;
+      scores['Reluctant Gentrifier'] = gentrifierScore;
+
+      // Sort by score
+      var flairArray = Object.keys(scores).map(function(flair) {
+        return { flair: flair, score: scores[flair] };
+      });
+      flairArray.sort(function(a, b) { return b.score - a.score; });
+
+      return flairArray;
+    }
+
+    function displayFlairBars(flairScores) {
+      var container = document.getElementById('hlru-flair-bars');
+      var html = '';
+
+      // Show top 3 flairs
+      var topFlairs = flairScores.slice(0, 3).filter(function(f) { return f.score > 0; });
+
+      if (topFlairs.length === 0) {
+        html = '<p style="font-size:0.85rem; color:var(--muted); text-align:center; font-style:italic;">Take the quiz to discover your local flair!</p>';
+      } else {
+        topFlairs.forEach(function(item, index) {
+          var barWidth = Math.max(item.score, 5); // minimum 5% for visibility
+          html += '<div style="margin-bottom:' + (index === topFlairs.length - 1 ? '0' : '12px') + ';">';
+          html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">';
+          html += '<span style="font-size:0.85rem; font-weight:' + (index === 0 ? '700' : '400') + ';">' + (index + 1) + '. ' + item.flair + '</span>';
+          html += '<span style="font-size:0.75rem; color:var(--muted);">' + item.score.toFixed(0) + '%</span>';
+          html += '</div>';
+          html += '<div style="background:#fff; border:1.5px solid var(--ink); height:' + (index === 0 ? '24px' : '20px') + '; position:relative; overflow:hidden;">';
+          html += '<div style="background:' + (index === 0 ? 'var(--ink)' : '#6b6b68') + '; height:100%; width:' + barWidth + '%; transition: width 0.5s ease;"></div>';
+          html += '</div>';
+          html += '</div>';
+        });
+      }
+
+      container.innerHTML = html;
+
+      // Store primary flair for sharing
+      if (topFlairs.length > 0) {
+        window.userPrimaryFlair = topFlairs[0].flair;
+      }
+    }
 
     function determineLocalFlair(yearsLived, bornHere, frequencies, activeCategories, loreScore, hasDirectAction, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, compassScore) {
       // Calculate nostalgia cop: active in 1-2 categories with high frequency
@@ -1225,12 +1324,11 @@
         }
       });
 
-      var localFlair = determineLocalFlair(x, n, freqs, activeCategories, L2, authBonus, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, C);
-      var flairElement = document.getElementById('hlru-flair');
-      if (flairElement && localFlair) {
-        flairElement.textContent = localFlair;
-        flairElement.style.display = 'inline-block';
-      }
+      // Calculate all flair scores
+      var flairScores = calculateAllFlairScores(x, n, freqs, activeCategories, L2, authBonus, hostBonus, civicFreq, transitModes, foodFreq, retailFreq, C);
+
+      // Display top 3 flairs as bar chart
+      displayFlairBars(flairScores);
 
       var breakdown = document.getElementById('hlru-breakdown');
       breakdown.innerHTML =
@@ -1255,6 +1353,64 @@
       }
     }
 
+    // ---------- SCOREBOARD TOGGLE ----------
+    var scoreboardToggleBtn = document.getElementById('hlru-scoreboard-toggle');
+    var scoreboardPanel = document.getElementById('hlru-scoreboard-panel');
+
+    if (scoreboardToggleBtn && scoreboardPanel) {
+      scoreboardToggleBtn.addEventListener('click', function() {
+        var isOpen = scoreboardPanel.style.display === 'block';
+        scoreboardPanel.style.display = isOpen ? 'none' : 'block';
+        scoreboardToggleBtn.textContent = isOpen ? 'Community Scoreboard' : 'Hide Scoreboard';
+
+        // Load leaderboard when opened
+        if (!isOpen) {
+          loadLeaderboard();
+        }
+      });
+    }
+
+    function loadLeaderboard() {
+      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
+
+      // Calculate average scores by zipcode
+      var zipcodeStats = {};
+      allData.forEach(function(d) {
+        if (!zipcodeStats[d.zipcode]) {
+          zipcodeStats[d.zipcode] = { total: 0, count: 0 };
+        }
+        zipcodeStats[d.zipcode].total += d.score;
+        zipcodeStats[d.zipcode].count += 1;
+      });
+
+      // Create leaderboard
+      var leaderboard = Object.keys(zipcodeStats).map(function(zip) {
+        return {
+          zipcode: zip,
+          avgScore: (zipcodeStats[zip].total / zipcodeStats[zip].count),
+          count: zipcodeStats[zip].count
+        };
+      });
+
+      leaderboard.sort(function(a, b) { return b.avgScore - a.avgScore; });
+
+      // Display top 10
+      var html = '';
+      if (leaderboard.length === 0) {
+        html = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No scores submitted yet. Be the first!</p>';
+      } else {
+        var topZips = leaderboard.slice(0, 10);
+        topZips.forEach(function(item, index) {
+          html += '<div class="hlru-breakdown-row" style="' + (index === topZips.length - 1 ? 'border-bottom:none;' : '') + '">';
+          html += '<span>' + (index + 1) + '. Zipcode ' + item.zipcode + ' <span style="color:var(--muted); font-size:0.75rem;">(' + item.count + ' response' + (item.count > 1 ? 's' : '') + ')</span></span>';
+          html += '<span style="font-weight:700;">' + item.avgScore.toFixed(1) + '/10</span>';
+          html += '</div>';
+        });
+      }
+
+      document.getElementById('hlru-leaderboard').innerHTML = html;
+    }
+
     // ---------- SHARE SCORE ----------
     var shareBtn = document.getElementById('hlru-share');
     var shareFeedback = document.getElementById('hlru-share-feedback');
@@ -1263,8 +1419,8 @@
       shareBtn.addEventListener('click', function() {
         var score = document.getElementById('hlru-score-num').textContent;
         var verdict = document.getElementById('hlru-verdict').textContent;
-        var flair = document.getElementById('hlru-flair').textContent;
-        var quizURL = 'https://hyperlocaldispatch.com/quiz';
+        var flair = window.userPrimaryFlair || 'local';
+        var quizURL = 'https://quiz.hyperlocaldispatch.com';
 
         // Shorten verdict to first sentence
         var shortVerdict = verdict.split('.')[0];
@@ -1321,14 +1477,12 @@
     // ---------- COMMUNITY DATA SUBMISSION ----------
     var submitDataBtn = document.getElementById('hlru-submit-data');
     var zipcodeInput = document.getElementById('hlru-zipcode');
-    var consentCheckbox = document.getElementById('hlru-consent');
     var dataFeedback = document.getElementById('hlru-data-feedback');
-    var communityStats = document.getElementById('hlru-community-stats');
+    var zipcodeStats = document.getElementById('hlru-zipcode-stats');
 
     if (submitDataBtn) {
       submitDataBtn.addEventListener('click', function() {
         var zipcode = zipcodeInput.value.trim();
-        var consent = consentCheckbox.checked;
 
         // Validation
         if (!zipcode) {
@@ -1336,13 +1490,8 @@
           return;
         }
 
-        if (zipcode.length < 5) {
-          showDataFeedback('Please enter a valid zipcode.', 'error');
-          return;
-        }
-
-        if (!consent) {
-          showDataFeedback('Please consent to share your data to view community stats.', 'error');
+        if (zipcode.length !== 5 || !/^\d{5}$/.test(zipcode)) {
+          showDataFeedback('Please enter a valid 5-digit US zipcode.', 'error');
           return;
         }
 
@@ -1350,7 +1499,7 @@
         var quizData = {
           score: parseFloat(document.getElementById('hlru-score-num').textContent),
           zipcode: zipcode,
-          flair: document.getElementById('hlru-flair').textContent || null,
+          flair: window.userPrimaryFlair || null,
           lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
           bornHere: document.getElementById('hlru-born').checked,
           breakdown: {
@@ -1377,8 +1526,8 @@
         // Store in localStorage for now (will be replaced with backend API call)
         storeQuizData(quizData);
 
-        // Load and display community statistics
-        loadCommunityStats(zipcode);
+        // Load and display zipcode statistics
+        loadZipcodeStats(zipcode, quizData.score);
       });
     }
 
@@ -1408,20 +1557,51 @@
       // });
     }
 
-    function loadCommunityStats(zipcode) {
+    function loadZipcodeStats(zipcode, userScore) {
       // For now, load from localStorage
       // This will be replaced with Firebase/Supabase API call
       var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
       var areaData = allData.filter(function(d) { return d.zipcode === zipcode; });
 
       if (areaData.length === 0) {
-        showDataFeedback('You\'re the first in your area! Check back later.', 'info');
-        // Still show the stats section with your solo data
-        areaData = [JSON.parse(localStorage.getItem('hlru_submissions')).pop()];
+        showDataFeedback('You\'re the first in ' + zipcode + '!', 'success');
+        return;
       }
 
-      // Calculate statistics
-      var avgScore = areaData.reduce(function(sum, d) { return sum + d.score; }, 0) / areaData.length;
+      // Display zipcode
+      document.getElementById('hlru-display-zip').textContent = zipcode;
+
+      // Create score distribution (0-10 in buckets)
+      var distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 0-1, 1-2, ..., 9-10
+      areaData.forEach(function(d) {
+        var bucket = Math.min(Math.floor(d.score), 10);
+        distribution[bucket]++;
+      });
+
+      var maxCount = Math.max.apply(null, distribution);
+
+      // Display score distribution as horizontal bars
+      var distHTML = '';
+      for (var i = 0; i <= 10; i++) {
+        var count = distribution[i];
+        var percentage = maxCount > 0 ? (count / maxCount * 100) : 0;
+        var isUserBucket = Math.floor(userScore) === i;
+
+        distHTML += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">';
+        distHTML += '<span style="font-size:0.75rem; min-width:30px; color:var(--muted);">' + i + '-' + (i + 1) + '</span>';
+        distHTML += '<div style="flex:1; background:#f0f0f0; height:20px; position:relative; border:1px solid var(--grid);">';
+        if (count > 0) {
+          distHTML += '<div style="background:' + (isUserBucket ? '#d32f2f' : 'var(--muted)') + '; height:100%; width:' + percentage + '%;"></div>';
+        }
+        distHTML += '</div>';
+        distHTML += '<span style="font-size:0.75rem; min-width:25px; color:var(--muted);">' + count + '</span>';
+        distHTML += '</div>';
+      }
+
+      document.getElementById('hlru-score-distribution').innerHTML = distHTML;
+      document.getElementById('hlru-user-score-marker').textContent = userScore.toFixed(1);
+
+      // Popular flairs
       var flairCounts = {};
       areaData.forEach(function(d) {
         if (d.flair) {
@@ -1429,38 +1609,31 @@
         }
       });
 
-      // Sort flair by count
       var flairArray = Object.keys(flairCounts).map(function(flair) {
         return { flair: flair, count: flairCounts[flair], percentage: (flairCounts[flair] / areaData.length * 100).toFixed(1) };
       });
       flairArray.sort(function(a, b) { return b.count - a.count; });
 
-      // Display results
-      document.getElementById('hlru-display-zip').textContent = zipcode;
-      document.getElementById('hlru-area-avg').textContent = avgScore.toFixed(1) + '/10';
-      document.getElementById('hlru-area-count').textContent = areaData.length;
-
       var flairHTML = '';
-      if (flairArray.length > 0) {
-        flairArray.forEach(function(item, index) {
-          flairHTML += '<div class="hlru-breakdown-row" style="' + (index === flairArray.length - 1 ? 'border-bottom:none;' : '') + '">';
+      var topFlairs = flairArray.slice(0, 5);
+      if (topFlairs.length > 0) {
+        topFlairs.forEach(function(item, index) {
+          flairHTML += '<div class="hlru-breakdown-row" style="' + (index === topFlairs.length - 1 ? 'border-bottom:none;' : '') + '">';
           flairHTML += '<span>' + (index + 1) + '. ' + item.flair + '</span>';
           flairHTML += '<span>' + item.count + ' (' + item.percentage + '%)</span>';
           flairHTML += '</div>';
         });
       } else {
-        flairHTML = '<div style="font-size:0.85rem; color:var(--muted); font-style:italic;">No flair data available yet.</div>';
+        flairHTML = '<div style="font-size:0.85rem; color:var(--muted); font-style:italic;">No flair data yet.</div>';
       }
-      document.getElementById('hlru-flair-distribution').innerHTML = flairHTML;
+      document.getElementById('hlru-zipcode-flairs').innerHTML = flairHTML;
 
       // Show the stats section
-      communityStats.style.display = 'block';
-      showDataFeedback('Community stats loaded!', 'success');
+      zipcodeStats.style.display = 'block';
+      showDataFeedback('Zipcode stats loaded!', 'success');
 
-      // Scroll to stats
-      setTimeout(function() {
-        communityStats.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 300);
+      // Reload leaderboard
+      loadLeaderboard();
     }
 
     showStep(current);
