@@ -946,6 +946,46 @@
                 <div id="hlru-math-body" style="margin-top:10px;"></div>
               </details>
               <p style="font-size:0.78rem; color:var(--ink); margin-top:14px; line-height:1.6;">The Local Formula was developed by <a href="https://www.hyperlocaldispatch.com/about" target="_blank" rel="noopener" style="color:var(--ink);">K. L. Graywill</a> for the Hyperlocal Dispatch July 2026 edition "The Hyperlocal Habit: A Practical Guide to Finding Belonging Anywhere." Additional math-y support from <a href="https://alexkritchevsky.com/" target="_blank" rel="noopener" style="color:var(--ink);">Alex Kritchevsky</a> and Andrew Evans.</p>
+
+              <!-- Community Data Section -->
+              <div class="hlru-community-section" id="hlru-community-section" style="margin-top:24px; border-top: 2px solid var(--ink); padding-top:20px;">
+                <h3 style="font-family: 'JMH Typewriter', monospace; font-size:1.1rem; margin-bottom:12px; font-weight:700;">See How Your Community Scores</h3>
+                <p style="font-size:0.85rem; color:var(--muted); line-height:1.6; margin-bottom:16px;">Share your zipcode to see average scores in your area and compare local flair distribution. Your data helps us understand hyperlocal trends!</p>
+
+                <div id="hlru-zipcode-form">
+                  <label for="hlru-zipcode" style="font-size:0.9rem; font-weight:700; display:block; margin-bottom:8px;">Your Zipcode</label>
+                  <input type="text" id="hlru-zipcode" placeholder="e.g. 27701" maxlength="10" style="font-family: 'JMH Typewriter', monospace; font-size:1rem; border:2px solid var(--ink); background:#fff; padding:10px; width:100%; max-width:200px; margin-bottom:12px;">
+
+                  <label class="hlru-consent-checkbox" style="display:flex; align-items:flex-start; gap:10px; font-size:0.85rem; line-height:1.5; margin-bottom:16px; cursor:pointer;">
+                    <input type="checkbox" id="hlru-consent" style="width:20px; height:20px; margin-top:2px; flex-shrink:0; cursor:pointer;">
+                    <span>I consent to share my anonymized score, zipcode, and local flair data for community statistics and research purposes.</span>
+                  </label>
+
+                  <button class="hlru-btn" id="hlru-submit-data" style="margin-bottom:12px;">View Community Stats</button>
+                  <div class="hlru-share-feedback" id="hlru-data-feedback"></div>
+                </div>
+
+                <!-- Community Statistics Display (hidden until data submitted) -->
+                <div id="hlru-community-stats" style="display:none; margin-top:20px;">
+                  <div style="background:#fff; border:2px solid var(--ink); padding:16px; margin-bottom:16px;">
+                    <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">📍 Your Area (Zipcode: <span id="hlru-display-zip"></span>)</h4>
+                    <div class="hlru-breakdown-row">
+                      <span style="font-weight:700;">Average Score:</span>
+                      <span id="hlru-area-avg">Loading...</span>
+                    </div>
+                    <div class="hlru-breakdown-row" style="border-bottom:none;">
+                      <span style="font-weight:700;">Total Responses:</span>
+                      <span id="hlru-area-count">Loading...</span>
+                    </div>
+                  </div>
+
+                  <div style="background:#fff; border:2px solid var(--ink); padding:16px;">
+                    <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">🏆 Local Flair Distribution (Your Area)</h4>
+                    <div id="hlru-flair-distribution">Loading...</div>
+                  </div>
+                </div>
+              </div>
+
               <br>
               <button class="hlru-btn" id="hlru-share" style="margin-bottom:12px;">Share My Score</button>
               <div class="hlru-share-feedback" id="hlru-share-feedback"></div>
@@ -1276,6 +1316,151 @@
           shareFeedback.classList.remove('visible');
         }, 3000);
       }
+    }
+
+    // ---------- COMMUNITY DATA SUBMISSION ----------
+    var submitDataBtn = document.getElementById('hlru-submit-data');
+    var zipcodeInput = document.getElementById('hlru-zipcode');
+    var consentCheckbox = document.getElementById('hlru-consent');
+    var dataFeedback = document.getElementById('hlru-data-feedback');
+    var communityStats = document.getElementById('hlru-community-stats');
+
+    if (submitDataBtn) {
+      submitDataBtn.addEventListener('click', function() {
+        var zipcode = zipcodeInput.value.trim();
+        var consent = consentCheckbox.checked;
+
+        // Validation
+        if (!zipcode) {
+          showDataFeedback('Please enter your zipcode.', 'error');
+          return;
+        }
+
+        if (zipcode.length < 5) {
+          showDataFeedback('Please enter a valid zipcode.', 'error');
+          return;
+        }
+
+        if (!consent) {
+          showDataFeedback('Please consent to share your data to view community stats.', 'error');
+          return;
+        }
+
+        // Get all the quiz data
+        var quizData = {
+          score: parseFloat(document.getElementById('hlru-score-num').textContent),
+          zipcode: zipcode,
+          flair: document.getElementById('hlru-flair').textContent || null,
+          lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
+          bornHere: document.getElementById('hlru-born').checked,
+          breakdown: {
+            theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
+            hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
+            compass: 0, // Will calculate below
+            authenticity: 0, // Will calculate below
+            lore: parseInt(document.getElementById('hlru-lore').value) || 0
+          },
+          timestamp: new Date().toISOString()
+        };
+
+        // Calculate compass score
+        var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+        var compassSum = 0;
+        compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
+        quizData.breakdown.compass = compassSum / compassScales.length;
+
+        // Calculate authenticity score
+        var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
+        var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+        quizData.breakdown.authenticity = authBase + authBonus;
+
+        // Store in localStorage for now (will be replaced with backend API call)
+        storeQuizData(quizData);
+
+        // Load and display community statistics
+        loadCommunityStats(zipcode);
+      });
+    }
+
+    function showDataFeedback(message, type) {
+      dataFeedback.textContent = message;
+      dataFeedback.style.color = type === 'error' ? '#d32f2f' : 'var(--ink)';
+      dataFeedback.classList.add('visible');
+      setTimeout(function() {
+        dataFeedback.classList.remove('visible');
+      }, 4000);
+    }
+
+    function storeQuizData(data) {
+      // For now, store in localStorage
+      // This will be replaced with Firebase/Supabase API call
+      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
+      allData.push(data);
+      localStorage.setItem('hlru_submissions', JSON.stringify(allData));
+
+      console.log('Quiz data stored locally:', data);
+      // TODO: Replace with actual API call when backend is set up
+      // Example:
+      // fetch('YOUR_API_ENDPOINT', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(data)
+      // });
+    }
+
+    function loadCommunityStats(zipcode) {
+      // For now, load from localStorage
+      // This will be replaced with Firebase/Supabase API call
+      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
+      var areaData = allData.filter(function(d) { return d.zipcode === zipcode; });
+
+      if (areaData.length === 0) {
+        showDataFeedback('You\'re the first in your area! Check back later.', 'info');
+        // Still show the stats section with your solo data
+        areaData = [JSON.parse(localStorage.getItem('hlru_submissions')).pop()];
+      }
+
+      // Calculate statistics
+      var avgScore = areaData.reduce(function(sum, d) { return sum + d.score; }, 0) / areaData.length;
+      var flairCounts = {};
+      areaData.forEach(function(d) {
+        if (d.flair) {
+          flairCounts[d.flair] = (flairCounts[d.flair] || 0) + 1;
+        }
+      });
+
+      // Sort flair by count
+      var flairArray = Object.keys(flairCounts).map(function(flair) {
+        return { flair: flair, count: flairCounts[flair], percentage: (flairCounts[flair] / areaData.length * 100).toFixed(1) };
+      });
+      flairArray.sort(function(a, b) { return b.count - a.count; });
+
+      // Display results
+      document.getElementById('hlru-display-zip').textContent = zipcode;
+      document.getElementById('hlru-area-avg').textContent = avgScore.toFixed(1) + '/10';
+      document.getElementById('hlru-area-count').textContent = areaData.length;
+
+      var flairHTML = '';
+      if (flairArray.length > 0) {
+        flairArray.forEach(function(item, index) {
+          flairHTML += '<div class="hlru-breakdown-row" style="' + (index === flairArray.length - 1 ? 'border-bottom:none;' : '') + '">';
+          flairHTML += '<span>' + (index + 1) + '. ' + item.flair + '</span>';
+          flairHTML += '<span>' + item.count + ' (' + item.percentage + '%)</span>';
+          flairHTML += '</div>';
+        });
+      } else {
+        flairHTML = '<div style="font-size:0.85rem; color:var(--muted); font-style:italic;">No flair data available yet.</div>';
+      }
+      document.getElementById('hlru-flair-distribution').innerHTML = flairHTML;
+
+      // Show the stats section
+      communityStats.style.display = 'block';
+      showDataFeedback('Community stats loaded!', 'success');
+
+      // Scroll to stats
+      setTimeout(function() {
+        communityStats.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
     }
 
     showStep(current);
