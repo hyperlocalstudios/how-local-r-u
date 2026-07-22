@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>How Local R U? - L.O.C.A.L. Score Quiz</title>
 
   <!-- Supabase Client Library -->
@@ -621,11 +624,18 @@
 
       #hlru-root .hlru-likert-item {
         margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
       }
 
       #hlru-root .hlru-likert-statement {
         font-size: 1rem;
         margin-bottom: 10px;
+      }
+
+      #hlru-root .hlru-likert-scale {
+        justify-content: center;
+        margin-top: 8px;
       }
 
       /* Better spacing for category rows */
@@ -927,8 +937,18 @@
             <div class="hlru-tooltip-panel" id="tt-6">This can be contemporary or historical lore. Lore can be the history of a building, and it can be a notorious policy failure that everyone remembers (e.g. did your city also kill a proposed light rail or transit extension? Ours too... and yeah we ALL remember that shit).</div>
           </div>
 
-          <!-- RESULTS -->
+          <!-- STEP 7: ZIPCODE INPUT -->
           <div class="hlru-step" data-step="7">
+            <span class="hlru-qnum">07</span><span class="hlru-tag">COMMUNITY LEADERBOARD</span>
+            <h2>Enter your zipcode to see how you stack up</h2>
+            <p class="hlru-place-hint" style="margin-left:0; margin-top:-8px; margin-bottom:16px;">This is optional, but lets you compare your score with your community.</p>
+            <div style="text-align:center; margin-top:24px;">
+              <input type="text" id="hlru-zipcode" placeholder="5-digit US zipcode" maxlength="5" pattern="[0-9]{5}" style="font-family: 'JMH Typewriter', monospace; font-size:1.1rem; border:2px solid var(--ink); background:#fff; padding:12px 16px; width:100%; max-width:280px; text-align:center;">
+            </div>
+          </div>
+
+          <!-- RESULTS -->
+          <div class="hlru-step" data-step="8">
             <div class="hlru-result">
               <!-- Score Section -->
               <div class="hlru-tag" style="margin-left:0;">YOUR L.O.C.A.L. SCORE</div>
@@ -944,7 +964,7 @@
               <!-- Action Buttons -->
               <div style="margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <button class="hlru-btn" id="hlru-share">Share My Score</button>
-                <button class="hlru-btn ghost" id="hlru-scoreboard-toggle">Community Scoreboard</button>
+                <button class="hlru-btn ghost" id="hlru-scoreboard-toggle">View Leaderboard</button>
               </div>
               <div class="hlru-share-feedback" id="hlru-share-feedback"></div>
 
@@ -954,17 +974,17 @@
 
                 <!-- Top Zipcodes Leaderboard -->
                 <div id="hlru-top-zipcodes" style="margin-bottom:24px;">
-                  <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">🏆 Top Scoring Zipcodes</h4>
+                  <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">🏆 Highest Scoring Zipcodes</h4>
                   <div id="hlru-leaderboard">Loading...</div>
                 </div>
 
-                <!-- Zipcode Input -->
-                <div style="border-top:2px solid var(--grid); padding-top:20px;">
-                  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">See how your zipcode stacks up:</p>
-                  <input type="text" id="hlru-zipcode" placeholder="my five digit US zipcode" maxlength="5" pattern="[0-9]{5}" style="font-family: 'JMH Typewriter', monospace; font-size:0.9rem; border:2px solid var(--ink); background:#fff; padding:8px 12px; width:100%; max-width:220px; margin-bottom:8px;">
-                  <br>
-                  <button class="hlru-btn" id="hlru-submit-data" style="font-size:0.7rem; padding:6px 12px; margin-top:4px;">Share my score</button>
-                  <div class="hlru-share-feedback" id="hlru-data-feedback"></div>
+                <!-- Zipcode Input for Stats -->
+                <div style="margin-top:20px; padding-top:20px; border-top:2px solid var(--grid);">
+                  <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">View Stats for Your Zipcode</h4>
+                  <div style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                    <input type="text" id="hlru-panel-zipcode" placeholder="5-digit zipcode" maxlength="5" pattern="[0-9]{5}" style="font-family: 'JMH Typewriter', monospace; font-size:1rem; border:2px solid var(--ink); background:#fff; padding:10px 14px; flex:1; min-width:180px;">
+                    <button id="hlru-load-zipcode-btn" class="hlru-btn" style="white-space:nowrap;">Load Stats</button>
+                  </div>
                 </div>
 
                 <!-- Zipcode Stats (hidden until submitted) -->
@@ -973,7 +993,7 @@
 
                   <!-- Score Distribution Graph -->
                   <div style="margin-bottom:20px;">
-                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Score Distribution</p>
+                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:20px;">Score Distribution</p>
                     <div id="hlru-score-distribution"></div>
                     <div style="font-size:0.75rem; color:var(--muted); margin-top:8px;">
                       <span style="color:#d32f2f;">●</span> Your score: <span id="hlru-user-score-marker"></span>
@@ -982,7 +1002,7 @@
 
                   <!-- Popular Flairs -->
                   <div>
-                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Most Popular Flairs</p>
+                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Most Popular Flairs <span style="font-size:0.7rem; font-weight:400; color:var(--muted);">(in this zipcode)</span></p>
                     <div id="hlru-zipcode-flairs"></div>
                   </div>
                 </div>
@@ -1038,7 +1058,7 @@
   var supabase = window.supabase || null;
 
   (function() {
-    var TOTAL_STEPS = 7; // 6 questions + results
+    var TOTAL_STEPS = 8; // 6 questions + zipcode + results
     var current = 1;
 
     var root = document.getElementById('hlru-root');
@@ -1046,8 +1066,8 @@
     var backBtn = document.getElementById('hlru-back');
     var nextBtn = document.getElementById('hlru-next');
 
-    // build progress segments (6 question segments, results not counted)
-    for (var i = 0; i < 6; i++) {
+    // build progress segments (7 segments now including zipcode page)
+    for (var i = 0; i < 7; i++) {
       var seg = document.createElement('div');
       seg.className = 'hlru-progress-seg';
       progressEl.appendChild(seg);
@@ -1058,7 +1078,7 @@
       segs.forEach(function(s, idx) {
         s.classList.toggle('done', idx < current);
       });
-      progressEl.style.display = current > 6 ? 'none' : 'flex';
+      progressEl.style.display = current > 7 ? 'none' : 'flex';
     }
 
     function showStep(n) {
@@ -1066,21 +1086,21 @@
         el.classList.toggle('active', parseInt(el.dataset.step, 10) === n);
       });
       backBtn.style.visibility = n === 1 ? 'hidden' : 'visible';
-      nextBtn.textContent = n === 6 ? 'See my score' : (n === 7 ? 'Done' : 'Next');
-      if (n === 7) {
+      nextBtn.textContent = n === 7 ? 'See my score' : (n === 8 ? 'Done' : 'Next');
+      if (n === 8) {
         nextBtn.style.display = 'none';
       } else {
         nextBtn.style.display = 'inline-block';
       }
       updateProgress();
-      if (n === 7) calculateScore();
+      if (n === 8) calculateScore();
     }
 
     backBtn.addEventListener('click', function() {
       if (current > 1) { current--; showStep(current); }
     });
     nextBtn.addEventListener('click', function() {
-      if (current < 7) { current++; showStep(current); }
+      if (current < 8) { current++; showStep(current); }
     });
 
     document.getElementById('hlru-restart').addEventListener('click', function() {
@@ -1367,46 +1387,173 @@
       function row(label, val) {
         return '<div class="hlru-breakdown-row"><span>' + label + '</span><span>' + val + '</span></div>';
       }
+
+      // Store quiz data with zipcode (if provided on step 7)
+      var zipcodeInput = document.getElementById('hlru-zipcode');
+      var zipcode = zipcodeInput ? zipcodeInput.value.trim() : '';
+      var quizData = {
+        score: score,
+        zipcode: (zipcode && zipcode.length === 5) ? zipcode : null,
+        flair: window.userPrimaryFlair || null,
+        lifespan: x,
+        bornHere: n === 1,
+        breakdown: {
+          theta: theta,
+          hyperlocal: H,
+          compass: C,
+          authenticity: A,
+          lore: L2
+        },
+        timestamp: new Date().toISOString()
+      };
+      storeQuizData(quizData);
     }
 
     // ---------- SCOREBOARD TOGGLE ----------
     var scoreboardToggleBtn = document.getElementById('hlru-scoreboard-toggle');
     var scoreboardPanel = document.getElementById('hlru-scoreboard-panel');
+    var zipcodeInput = document.getElementById('hlru-zipcode');
+
+    // Scoreboard button is always enabled
+    if (scoreboardToggleBtn) {
+      scoreboardToggleBtn.disabled = false;
+      scoreboardToggleBtn.style.opacity = '1';
+      scoreboardToggleBtn.style.cursor = 'pointer';
+    }
 
     if (scoreboardToggleBtn && scoreboardPanel) {
       scoreboardToggleBtn.addEventListener('click', function() {
         var isOpen = scoreboardPanel.style.display === 'block';
-        scoreboardPanel.style.display = isOpen ? 'none' : 'block';
-        scoreboardToggleBtn.textContent = isOpen ? 'Community Scoreboard' : 'Hide Scoreboard';
 
-        // Load leaderboard when opened
-        if (!isOpen) {
+        if (isOpen) {
+          // Close the panel
+          scoreboardPanel.style.display = 'none';
+          scoreboardToggleBtn.textContent = 'View Leaderboard';
+        } else {
+          // Open the panel
+          var zipcode = zipcodeInput ? zipcodeInput.value.trim() : '';
+          var hasValidZipcode = zipcode && zipcode.length === 5 && /^\d{5}$/.test(zipcode);
+
+          // If valid zipcode, store quiz data
+          if (hasValidZipcode) {
+            var quizData = {
+              score: parseFloat(document.getElementById('hlru-score-num').textContent),
+              zipcode: zipcode,
+              flair: window.userPrimaryFlair || null,
+              lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
+              bornHere: document.getElementById('hlru-born').checked,
+              breakdown: {
+                theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
+                hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
+                compass: 0,
+                authenticity: 0,
+                lore: parseInt(document.getElementById('hlru-lore').value) || 0
+              },
+              timestamp: new Date().toISOString()
+            };
+
+            // Calculate compass and authenticity
+            var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+            var compassSum = 0;
+            compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
+            quizData.breakdown.compass = compassSum / compassScales.length;
+
+            var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
+            var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+            quizData.breakdown.authenticity = authBase + authBonus;
+
+            // Store the data
+            storeQuizData(quizData);
+          }
+
+          // Always load leaderboard
+          scoreboardPanel.style.display = 'block';
+          scoreboardToggleBtn.textContent = 'Hide Leaderboard';
           loadLeaderboard();
+
+          // Only load zipcode stats if valid zipcode provided
+          if (hasValidZipcode) {
+            var userScore = parseFloat(document.getElementById('hlru-score-num').textContent);
+            loadZipcodeStats(zipcode, userScore);
+          }
+        }
+      });
+    }
+
+    // ---------- LOAD ZIPCODE STATS BUTTON ----------
+    var loadZipcodeBtn = document.getElementById('hlru-load-zipcode-btn');
+    var panelZipcodeInput = document.getElementById('hlru-panel-zipcode');
+
+    if (loadZipcodeBtn && panelZipcodeInput) {
+      loadZipcodeBtn.addEventListener('click', function() {
+        var zipcode = panelZipcodeInput.value.trim();
+
+        if (zipcode && zipcode.length === 5 && /^\d{5}$/.test(zipcode)) {
+          var userScore = parseFloat(document.getElementById('hlru-score-num').textContent);
+
+          // Store quiz data with this zipcode
+          var quizData = {
+            score: userScore,
+            zipcode: zipcode,
+            flair: window.userPrimaryFlair || null,
+            lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
+            bornHere: document.getElementById('hlru-born').checked,
+            breakdown: {
+              theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
+              hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
+              compass: 0,
+              authenticity: 0,
+              lore: parseInt(document.getElementById('hlru-lore').value) || 0
+            },
+            timestamp: new Date().toISOString()
+          };
+
+          // Calculate compass and authenticity
+          var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+          var compassSum = 0;
+          compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
+          quizData.breakdown.compass = compassSum / compassScales.length;
+
+          var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
+          var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+          quizData.breakdown.authenticity = authBase + authBonus;
+
+          // Store the data
+          storeQuizData(quizData);
+
+          // Load zipcode stats
+          loadZipcodeStats(zipcode, userScore);
+        } else {
+          alert('Please enter a valid 5-digit US zipcode.');
         }
       });
     }
 
     async function loadLeaderboard() {
       if (!supabase) {
+        console.warn('Supabase not available for leaderboard');
         return; // Silently skip if not available
       }
 
       try {
-        // Fetch all data from Supabase
+        // Fetch all data from Supabase (only entries with zipcodes)
         const { data: allData, error } = await supabase
           .from('submissions')
-          .select('zipcode, score');
+          .select('zipcode, score')
+          .not('zipcode', 'is', null);
 
         if (error) throw error;
 
         // Calculate average scores by zipcode
         var zipcodeStats = {};
         allData.forEach(function(d) {
-          if (!zipcodeStats[d.zipcode]) {
-            zipcodeStats[d.zipcode] = { total: 0, count: 0 };
+          if (d.zipcode) { // Extra safety check to filter out null zipcodes
+            if (!zipcodeStats[d.zipcode]) {
+              zipcodeStats[d.zipcode] = { total: 0, count: 0 };
+            }
+            zipcodeStats[d.zipcode].total += d.score;
+            zipcodeStats[d.zipcode].count += 1;
           }
-          zipcodeStats[d.zipcode].total += d.score;
-          zipcodeStats[d.zipcode].count += 1;
         });
 
         // Create leaderboard
@@ -1423,7 +1570,7 @@
         // Display top 10
         var html = '';
         if (leaderboard.length === 0) {
-          html = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No scores submitted yet. Be the first!</p>';
+          html = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No scores with zipcodes submitted yet. Be the first to enter your zipcode!</p>';
         } else {
           var topZips = leaderboard.slice(0, 10);
           topZips.forEach(function(item, index) {
@@ -1451,6 +1598,36 @@
         var verdict = document.getElementById('hlru-verdict').textContent;
         var flair = window.userPrimaryFlair || 'local';
         var quizURL = 'https://quiz.hyperlocaldispatch.com';
+
+        // Store data without zipcode (for challenge/share)
+        var quizData = {
+          score: parseFloat(score),
+          zipcode: null,
+          flair: flair,
+          lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
+          bornHere: document.getElementById('hlru-born').checked,
+          breakdown: {
+            theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
+            hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
+            compass: 0,
+            authenticity: 0,
+            lore: parseInt(document.getElementById('hlru-lore').value) || 0
+          },
+          timestamp: new Date().toISOString()
+        };
+
+        // Calculate compass and authenticity (same as submit button)
+        var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+        var compassSum = 0;
+        compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
+        quizData.breakdown.compass = compassSum / compassScales.length;
+
+        var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
+        var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+        quizData.breakdown.authenticity = authBase + authBonus;
+
+        // Store the data
+        storeQuizData(quizData);
 
         // Shorten verdict to first sentence
         var shortVerdict = verdict.split('.')[0];
@@ -1504,71 +1681,6 @@
       }
     }
 
-    // ---------- COMMUNITY DATA SUBMISSION ----------
-    var submitDataBtn = document.getElementById('hlru-submit-data');
-    var zipcodeInput = document.getElementById('hlru-zipcode');
-    var dataFeedback = document.getElementById('hlru-data-feedback');
-    var zipcodeStats = document.getElementById('hlru-zipcode-stats');
-
-    if (submitDataBtn) {
-      submitDataBtn.addEventListener('click', function() {
-        var zipcode = zipcodeInput.value.trim();
-
-        // Validation
-        if (!zipcode) {
-          showDataFeedback('Please enter your zipcode.', 'error');
-          return;
-        }
-
-        if (zipcode.length !== 5 || !/^\d{5}$/.test(zipcode)) {
-          showDataFeedback('Please enter a valid 5-digit US zipcode.', 'error');
-          return;
-        }
-
-        // Get all the quiz data
-        var quizData = {
-          score: parseFloat(document.getElementById('hlru-score-num').textContent),
-          zipcode: zipcode,
-          flair: window.userPrimaryFlair || null,
-          lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
-          bornHere: document.getElementById('hlru-born').checked,
-          breakdown: {
-            theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
-            hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
-            compass: 0, // Will calculate below
-            authenticity: 0, // Will calculate below
-            lore: parseInt(document.getElementById('hlru-lore').value) || 0
-          },
-          timestamp: new Date().toISOString()
-        };
-
-        // Calculate compass score
-        var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
-        var compassSum = 0;
-        compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
-        quizData.breakdown.compass = compassSum / compassScales.length;
-
-        // Calculate authenticity score
-        var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
-        var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
-        quizData.breakdown.authenticity = authBase + authBonus;
-
-        // Store in localStorage for now (will be replaced with backend API call)
-        storeQuizData(quizData);
-
-        // Load and display zipcode statistics
-        loadZipcodeStats(zipcode, quizData.score);
-      });
-    }
-
-    function showDataFeedback(message, type) {
-      dataFeedback.textContent = message;
-      dataFeedback.style.color = type === 'error' ? '#d32f2f' : 'var(--ink)';
-      dataFeedback.classList.add('visible');
-      setTimeout(function() {
-        dataFeedback.classList.remove('visible');
-      }, 4000);
-    }
 
     async function storeQuizData(data) {
       // Try Supabase if available
@@ -1590,7 +1702,6 @@
             throw error;
           }
 
-          console.log('Quiz data stored in Supabase:', data);
           return true;
         } catch (error) {
           console.error('Failed to store quiz data in Supabase:', error);
@@ -1601,13 +1712,12 @@
       var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
       allData.push(data);
       localStorage.setItem('hlru_submissions', JSON.stringify(allData));
-      console.log('Quiz data stored locally');
       return false;
     }
 
     async function loadZipcodeStats(zipcode, userScore) {
       if (!supabase) {
-        showDataFeedback('Community stats coming soon!', 'error');
+        console.warn('Supabase not available');
         return;
       }
 
@@ -1621,7 +1731,6 @@
         if (error) throw error;
 
       if (areaData.length === 0) {
-        showDataFeedback('You\'re the first in ' + zipcode + '!', 'success');
         return;
       }
 
@@ -1648,10 +1757,22 @@
 
       for (var i = 0; i <= 10; i++) {
         var count = distribution[i];
-        var heightPercentage = maxCount > 0 ? (count / maxCount * 100) : 0;
+        // Better scaling: use logarithmic-like scaling for better visibility
+        // Give minimum 35% height for any non-zero bar, scale the rest proportionally
+        var heightPercentage;
+        if (count === 0) {
+          heightPercentage = 0;
+        } else if (maxCount > 0) {
+          var rawPercentage = (count / maxCount);
+          // Scale so that the smallest bar is at least 35% and max is 100%
+          heightPercentage = 35 + (rawPercentage * 65);
+        } else {
+          heightPercentage = 0;
+        }
+
         var isUserBucket = Math.floor(userScore) === i;
 
-        distHTML += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; position:relative;">';
+        distHTML += '<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; position:relative; height:100%;">';
 
         // The bar itself
         distHTML += '<div style="width:100%; max-width:40px; background:' + (isUserBucket ? '#d32f2f' : 'var(--muted)') + '; height:' + heightPercentage + '%; min-height:' + (count > 0 ? '4px' : '0') + '; border:' + (count > 0 ? '1.5px solid var(--ink)' : 'none') + '; border-bottom:none; transition:height 0.3s ease;"></div>';
@@ -1707,14 +1828,12 @@
       document.getElementById('hlru-zipcode-flairs').innerHTML = flairHTML;
 
         // Show the stats section
-        zipcodeStats.style.display = 'block';
-        showDataFeedback('Zipcode stats loaded!', 'success');
-
-        // Reload leaderboard
-        loadLeaderboard();
+        var zipcodeStatsEl = document.getElementById('hlru-zipcode-stats');
+        if (zipcodeStatsEl) {
+          zipcodeStatsEl.style.display = 'block';
+        }
       } catch (error) {
         console.error('Error loading zipcode stats:', error);
-        showDataFeedback('Error loading stats. Please try again.', 'error');
       }
     }
 
