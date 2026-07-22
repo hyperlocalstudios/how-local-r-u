@@ -6,13 +6,6 @@
   <title>How Local R U? - L.O.C.A.L. Score Quiz</title>
 
   <!-- Supabase Client Library -->
-  <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-      }
-    }
-  </script>
 
   <style>
     /* ============================================================
@@ -1030,8 +1023,8 @@
   </div>
 
   <script type="module">
-  // Import Supabase
-  import { createClient } from '@supabase/supabase-js';
+  // Import Supabase from CDN
+  import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
 
   // Initialize Supabase client and make it globally available
   window.supabase = createClient(
