@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>How Local R U? - L.O.C.A.L. Score Quiz</title>
 
+  <!-- Supabase Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
   <style>
     /* ============================================================
        CUSTOM FONTS
@@ -1370,45 +1374,55 @@
       });
     }
 
-    function loadLeaderboard() {
-      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
+    async function loadLeaderboard() {
+      try {
+        // Fetch all data from Supabase
+        const { data: allData, error } = await supabase
+          .from('submissions')
+          .select('zipcode, score');
 
-      // Calculate average scores by zipcode
-      var zipcodeStats = {};
-      allData.forEach(function(d) {
-        if (!zipcodeStats[d.zipcode]) {
-          zipcodeStats[d.zipcode] = { total: 0, count: 0 };
-        }
-        zipcodeStats[d.zipcode].total += d.score;
-        zipcodeStats[d.zipcode].count += 1;
-      });
+        if (error) throw error;
 
-      // Create leaderboard
-      var leaderboard = Object.keys(zipcodeStats).map(function(zip) {
-        return {
-          zipcode: zip,
-          avgScore: (zipcodeStats[zip].total / zipcodeStats[zip].count),
-          count: zipcodeStats[zip].count
-        };
-      });
-
-      leaderboard.sort(function(a, b) { return b.avgScore - a.avgScore; });
-
-      // Display top 10
-      var html = '';
-      if (leaderboard.length === 0) {
-        html = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No scores submitted yet. Be the first!</p>';
-      } else {
-        var topZips = leaderboard.slice(0, 10);
-        topZips.forEach(function(item, index) {
-          html += '<div class="hlru-breakdown-row" style="' + (index === topZips.length - 1 ? 'border-bottom:none;' : '') + '">';
-          html += '<span>' + (index + 1) + '. Zipcode ' + item.zipcode + ' <span style="color:var(--muted); font-size:0.75rem;">(' + item.count + ' response' + (item.count > 1 ? 's' : '') + ')</span></span>';
-          html += '<span style="font-weight:700;">' + item.avgScore.toFixed(1) + '/10</span>';
-          html += '</div>';
+        // Calculate average scores by zipcode
+        var zipcodeStats = {};
+        allData.forEach(function(d) {
+          if (!zipcodeStats[d.zipcode]) {
+            zipcodeStats[d.zipcode] = { total: 0, count: 0 };
+          }
+          zipcodeStats[d.zipcode].total += d.score;
+          zipcodeStats[d.zipcode].count += 1;
         });
-      }
 
-      document.getElementById('hlru-leaderboard').innerHTML = html;
+        // Create leaderboard
+        var leaderboard = Object.keys(zipcodeStats).map(function(zip) {
+          return {
+            zipcode: zip,
+            avgScore: (zipcodeStats[zip].total / zipcodeStats[zip].count),
+            count: zipcodeStats[zip].count
+          };
+        });
+
+        leaderboard.sort(function(a, b) { return b.avgScore - a.avgScore; });
+
+        // Display top 10
+        var html = '';
+        if (leaderboard.length === 0) {
+          html = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No scores submitted yet. Be the first!</p>';
+        } else {
+          var topZips = leaderboard.slice(0, 10);
+          topZips.forEach(function(item, index) {
+            html += '<div class="hlru-breakdown-row" style="' + (index === topZips.length - 1 ? 'border-bottom:none;' : '') + '">';
+            html += '<span>' + (index + 1) + '. Zipcode ' + item.zipcode + ' <span style="color:var(--muted); font-size:0.75rem;">(' + item.count + ' response' + (item.count > 1 ? 's' : '') + ')</span></span>';
+            html += '<span style="font-weight:700;">' + item.avgScore.toFixed(1) + '/10</span>';
+            html += '</div>';
+          });
+        }
+
+        document.getElementById('hlru-leaderboard').innerHTML = html;
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        document.getElementById('hlru-leaderboard').innerHTML = '<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">Error loading leaderboard.</p>';
+      }
     }
 
     // ---------- SHARE SCORE ----------
@@ -1540,28 +1554,46 @@
       }, 4000);
     }
 
-    function storeQuizData(data) {
-      // For now, store in localStorage
-      // This will be replaced with Firebase/Supabase API call
-      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
-      allData.push(data);
-      localStorage.setItem('hlru_submissions', JSON.stringify(allData));
+    async function storeQuizData(data) {
+      try {
+        // Insert data into Supabase
+        const { data: result, error } = await supabase
+          .from('submissions')
+          .insert([{
+            score: data.score,
+            zipcode: data.zipcode,
+            flair: data.flair,
+            lifespan: data.lifespan,
+            raised_here: data.bornHere,
+            breakdown: data.breakdown
+          }]);
 
-      console.log('Quiz data stored locally:', data);
-      // TODO: Replace with actual API call when backend is set up
-      // Example:
-      // fetch('YOUR_API_ENDPOINT', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
+        if (error) {
+          console.error('Error storing data:', error);
+          throw error;
+        }
+
+        console.log('Quiz data stored in Supabase:', data);
+        return true;
+      } catch (error) {
+        console.error('Failed to store quiz data:', error);
+        // Fallback to localStorage if Supabase fails
+        var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
+        allData.push(data);
+        localStorage.setItem('hlru_submissions', JSON.stringify(allData));
+        return false;
+      }
     }
 
-    function loadZipcodeStats(zipcode, userScore) {
-      // For now, load from localStorage
-      // This will be replaced with Firebase/Supabase API call
-      var allData = JSON.parse(localStorage.getItem('hlru_submissions') || '[]');
-      var areaData = allData.filter(function(d) { return d.zipcode === zipcode; });
+    async function loadZipcodeStats(zipcode, userScore) {
+      try {
+        // Fetch data from Supabase
+        const { data: areaData, error } = await supabase
+          .from('submissions')
+          .select('*')
+          .eq('zipcode', zipcode);
+
+        if (error) throw error;
 
       if (areaData.length === 0) {
         showDataFeedback('You\'re the first in ' + zipcode + '!', 'success');
@@ -1649,12 +1681,16 @@
       }
       document.getElementById('hlru-zipcode-flairs').innerHTML = flairHTML;
 
-      // Show the stats section
-      zipcodeStats.style.display = 'block';
-      showDataFeedback('Zipcode stats loaded!', 'success');
+        // Show the stats section
+        zipcodeStats.style.display = 'block';
+        showDataFeedback('Zipcode stats loaded!', 'success');
 
-      // Reload leaderboard
-      loadLeaderboard();
+        // Reload leaderboard
+        loadLeaderboard();
+      } catch (error) {
+        console.error('Error loading zipcode stats:', error);
+        showDataFeedback('Error loading stats. Please try again.', 'error');
+      }
     }
 
     showStep(current);
