@@ -1013,9 +1013,9 @@
                     </div>
                   </div>
 
-                  <!-- Popular Flairs -->
+                  <!-- Popular Archetypes -->
                   <div>
-                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Most Popular Flairs <span style="font-size:0.7rem; font-weight:400; color:var(--muted);">(in this zipcode)</span></p>
+                    <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Most Popular Archetypes <span style="font-size:0.7rem; font-weight:400; color:var(--muted);">(in this city)</span></p>
                     <div id="hlru-zipcode-flairs"></div>
                   </div>
                 </div>
@@ -1030,8 +1030,8 @@
                 <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">The function that underlies your score is a logistic growth curve, a mathematical model that produces a distinctive S-shaped (sigmoid) graph, commonly used to describe growth, spread, or probability that starts exponentially but slows down and eventually levels off as it reaches a maximum limiting value.</div>
               </details>
               <details class="hlru-math">
-                <summary>about local flair</summary>
-                <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">This flair is assigned to you based on your years lived, whether you were born in the area, your civic engagement patterns, how often you visit local places, and your knowledge of local lore.</div>
+                <summary>about local archetype</summary>
+                <div style="margin-top:10px; font-size:0.72rem; color:var(--muted);">Your archetype is assigned based on your years lived, whether you were born in the area, your civic engagement patterns, how often you visit local places, and your knowledge of local lore.</div>
               </details>
               <details class="hlru-math">
                 <summary>show your math</summary>
@@ -1211,7 +1211,7 @@
       var topFlairs = flairScores.slice(0, 3).filter(function(f) { return f.score > 0; });
 
       if (topFlairs.length === 0) {
-        html = '<p style="font-size:0.85rem; color:var(--muted); text-align:center; font-style:italic;">Take the quiz to discover your local flair!</p>';
+        html = '<p style="font-size:0.85rem; color:var(--muted); text-align:center; font-style:italic;">Take the quiz to discover your local archetype!</p>';
       } else {
         topFlairs.forEach(function(item, index) {
           var barWidth = Math.max(item.score, 5); // minimum 5% for visibility
@@ -1648,7 +1648,7 @@
         var shareText = 'I scored ' + score + '/10 on the How Local R U? quiz!\n';
         shareText += 'I am ' + shortVerdict.toLowerCase() + '.';
         if (flair) {
-          shareText += ' My local flair is "' + flair + '"';
+          shareText += ' My local archetype is "' + flair + '"';
         }
         shareText += '\n\nCalculate your L.O.C.A.L. score: ' + quizURL;
 
@@ -1936,7 +1936,7 @@
           flairHTML += '</div>';
         });
       } else {
-        flairHTML = '<div style="font-size:0.85rem; color:var(--muted); font-style:italic;">No flair data yet.</div>';
+        flairHTML = '<div style="font-size:0.85rem; color:var(--muted); font-style:italic;">No archetype data yet.</div>';
       }
       document.getElementById('hlru-zipcode-flairs').innerHTML = flairHTML;
 
