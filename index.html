@@ -1419,7 +1419,10 @@
         },
         timestamp: new Date().toISOString()
       };
+
+      // Store data and mark as submitted to prevent duplicates
       storeQuizData(quizData);
+      window.quizDataSubmitted = true;
     }
 
     // ---------- SCOREBOARD TOGGLE ----------
@@ -1447,8 +1450,8 @@
           var zipcode = zipcodeInput ? zipcodeInput.value.trim() : '';
           var hasValidZipcode = zipcode && zipcode.length === 5 && /^\d{5}$/.test(zipcode);
 
-          // If valid zipcode, store quiz data
-          if (hasValidZipcode) {
+          // If valid zipcode AND not already submitted, store quiz data
+          if (hasValidZipcode && !window.quizDataSubmitted) {
             var quizData = {
               score: parseFloat(document.getElementById('hlru-score-num').textContent),
               zipcode: zipcode,
@@ -1475,8 +1478,9 @@
             var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
             quizData.breakdown.authenticity = authBase + authBonus;
 
-            // Store the data
+            // Store the data and mark as submitted
             storeQuizData(quizData);
+            window.quizDataSubmitted = true;
           }
 
           // Always load leaderboard
@@ -1504,37 +1508,40 @@
         if (zipcode && zipcode.length === 5 && /^\d{5}$/.test(zipcode)) {
           var userScore = parseFloat(document.getElementById('hlru-score-num').textContent);
 
-          // Store quiz data with this zipcode
-          var quizData = {
-            score: userScore,
-            zipcode: zipcode,
-            flair: window.userPrimaryFlair || null,
-            lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
-            bornHere: document.getElementById('hlru-born').checked,
-            breakdown: {
-              theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
-              hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
-              compass: 0,
-              authenticity: 0,
-              lore: parseInt(document.getElementById('hlru-lore').value) || 0
-            },
-            timestamp: new Date().toISOString()
-          };
+          // Only store data if not already submitted
+          if (!window.quizDataSubmitted) {
+            var quizData = {
+              score: userScore,
+              zipcode: zipcode,
+              flair: window.userPrimaryFlair || null,
+              lifespan: parseFloat(document.getElementById('hlru-l1').value) || 0,
+              bornHere: document.getElementById('hlru-born').checked,
+              breakdown: {
+                theta: parseFloat(document.getElementById('hlru-breakdown').textContent.match(/θ · outreach[\s\S]*?([\d.]+)/)?.[1]) || 0,
+                hyperlocal: parseFloat(document.getElementById('hlru-h').value) || 0,
+                compass: 0,
+                authenticity: 0,
+                lore: parseInt(document.getElementById('hlru-lore').value) || 0
+              },
+              timestamp: new Date().toISOString()
+            };
 
-          // Calculate compass and authenticity
-          var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
-          var compassSum = 0;
-          compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
-          quizData.breakdown.compass = compassSum / compassScales.length;
+            // Calculate compass and authenticity
+            var compassScales = root.querySelectorAll('#hlru-compass-list .hlru-likert-scale');
+            var compassSum = 0;
+            compassScales.forEach(function(s) { compassSum += parseInt(s.dataset.value || '0', 10); });
+            quizData.breakdown.compass = compassSum / compassScales.length;
 
-          var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
-          var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
-          quizData.breakdown.authenticity = authBase + authBonus;
+            var authBase = root.querySelectorAll('#hlru-auth-list input:checked').length;
+            var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
+            quizData.breakdown.authenticity = authBase + authBonus;
 
-          // Store the data
-          storeQuizData(quizData);
+            // Store the data and mark as submitted
+            storeQuizData(quizData);
+            window.quizDataSubmitted = true;
+          }
 
-          // Load zipcode stats
+          // Always load zipcode stats
           loadZipcodeStats(zipcode, userScore);
         } else {
           alert('Please enter a valid 5-digit US zipcode.');
@@ -1639,8 +1646,11 @@
         var authBonus = document.getElementById('hlru-auth-bonus').checked ? 1 : 0;
         quizData.breakdown.authenticity = authBase + authBonus;
 
-        // Store the data
-        storeQuizData(quizData);
+        // Store the data only if not already submitted
+        if (!window.quizDataSubmitted) {
+          storeQuizData(quizData);
+          window.quizDataSubmitted = true;
+        }
 
         // Shorten verdict to first sentence
         var shortVerdict = verdict.split('.')[0];
